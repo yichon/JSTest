@@ -1,3 +1,18 @@
+function tester(func, input, expected) {
+    try {
+        var ro = {result: undefined, output: undefined};
+        if ((typeof func !== 'function') || !(input instanceof Array) ||
+                expected === undefined || (ro.output = func.apply(this, input)) !== expected) {
+            ro.result = 'Failed';
+            return ro;
+        } else {
+            ro.result = 'Success';
+            return ro;
+        }
+    } catch (err) {
+        return "[Error]: " + err;
+    }
+}
 function compareObjContent(obj1, obj2) {
     //
     var sub = function (o1, o2) {

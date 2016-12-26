@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>jstest</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../../jquery-3.1.1.js"></script>
+        <script src="../obj.js"></script>
+
+    </head>
+    <body>
+        <h1>This is a JS Test</h1>
+
+        <button name="b1" id="show">Click me!</button>
+        <p></p>
+        <div id="demo"></div>
+
+        <script>
+            function Person(name) {
+                this.name = name;
+                this.walk = function () {
+                    alert(this.name + " is walking.");
+                };
+            }
+            Person.prototype.sayHello = function () {
+                alert("Hello, my name is " + this.name + ".");
+            };
+            Person.prototype.run = function () {
+                alert(this.name + " is running.");
+            };
+
+            function Employee(name, title) {
+                Person.call(this, name);
+                this.title = title;
+            }
+            //Employee.prototype = Person.prototype; // what if using this instead?
+            //Employee.prototype = new Person();  // ?
+            Employee.prototype = Object.create(Person.prototype); // default
+            Employee.prototype.constructor = Employee;
+            Employee.prototype.sayHello = function () {
+                alert("Hello, my name is " + this.name + ", I'm the " + this.title + ".");
+            };
+
+            // test start - 1 overall
+            var txt = "Hello, World!";
+            var p = new Person("Jane");
+            //alert(Person.prototype.isPrototypeOf(p)); // output: true
+            //p.sayHello(); // output: Hello, my name is Jane.
+            //alert(typeof Person.prototype); // output: object
+
+            //txt = outputObj(Person.prototype);
+            //output: 
+            //     [n: sayHello - d: 0 - v: function () { alert("Hello, my name is " + this.name + "."); }]
+            //     [n: run - d: 0 - v: function () { alert(this.name + " is running."); }]
+
+            //alert(typeof Employee.prototype); // output: object
+            //alert(typeof Employee.constructor); // output: function
+
+            //txt = outputObj(Employee.prototype);
+            //output: 
+            //[n: constructor - d: 0 - v: function Employee(name, title) { Person.call(this, name); this.title = title; }]
+            //[n: sayHello - d: 0 - v: function () { alert("Hello, my name is " + this.name + ", I'm the " + this.title + "."); }]
+            //[n: run - d: 0 - v: function () { alert(this.name + " is running."); }]
+
+            //txt = Employee.prototype.constructor.toString();
+            //output: function Employee(name, title) { Person.call(this, name); this.title = title; }
+            var jane = new Employee("Jane", "Accountant");
+            //jane.sayHello(); //output: Hello, my name is Jane, I'm the Accountant.
+            //jane.walk(); // output: Jane is walking.
+            //jane.run();  // output: Jane is running.
+            //alert(Employee.prototype.isPrototypeOf(jane)); // output: true
+
+            //txt = jane.constructor.toString();
+            //output: function Employee(name, title) { Person.call(this, name); this.title = title; }
+
+            //txt = typeof jane.prototype; //output:undefined
+            // test end - 1
+
+            //test start - 2
+            //what if using 'Employee.prototype = Person.prototype' instead?
+
+            //jane.sayHello(); //output: Hello, my name is Jane, I'm the Accountant.
+            //jane.walk(); // output: Jane is walking.
+            //jane.run();  // output: Jane is running.
+            //alert(Employee.prototype.isPrototypeOf(jane)); // output: true
+
+            //txt = jane.constructor.toString();
+            //output: function Employee(name, title) { Person.call(this, name); this.title = title; }
+            //p.sayHello();  //output: Hello, my name is Jane, I'm the undefined. 
+            //Because 'Employee.prototype.sayHello = function () {...}' also changed the 'Person.prototype'.
+            //test end - 2
+
+            //test start - 3
+            //what if using 'Employee.prototype = new Person()' instead?
+
+            //jane.sayHello(); //output: Hello, my name is Jane, I'm the Accountant.
+            //jane.walk(); // output: Jane is walking.
+            //jane.run();  // output: Jane is running.
+            //alert(Employee.prototype.isPrototypeOf(jane)); // output: true        
+            try {
+                let e = Object.create(Employee.prototype);
+                //e.sayHello();  // output: Hello, my name is undefined, I'm the undefined
+                //e.walk(); // output: undefined is walking.
+                //e.run(); // output: undefined is running.
+                let x = Object.create(Person.prototype);
+                //x.sayHello(); // output: Hello, my name is undefined.
+                //x.walk(); //throw an error: Object doesn't support property or method 'walk'
+                //x.run(); // output: undefined is running.
+            } catch (err) {
+                alert(err.message);
+            }
+            //test end - 3
+
+            //test start - 4
+            //using default: 'Employee.prototype = Object.create(Person.prototype)'
+            try {
+                let e = Object.create(Employee.prototype);
+                //alert(typeof e.prototype); // output: undefined
+                //e.sayHello();  // output: Hello, my name is undefined, I'm the undefined.
+                //e.walk(); // throw an error: Object doesn't support property or method 'walk'
+                //e.run(); // output: undefined is running.
+                let x = Object.create(Person.prototype);
+                //x.sayHello(); // output: Hello, my name is undefined.
+                //x.walk(); //throw an error: Object doesn't support property or method 'walk'
+                //x.run(); // output: undefined is running.
+            } catch (err) {
+                alert(err.message);
+            }
+            //test end - 4
+
+            //test start - 5
+            //using default: 'Employee.prototype = Object.create(Person.prototype)'
+            try {
+                //Person.prototype.sayHello(); // output: Hello, my name is undefined.
+                //Person.prototype.run(); // output: undefined is running.
+                //Person.prototype.walk(); //throw an error: Object doesn't support property or method 'walk' 
+                //
+                //Employee.prototype.sayHello(); // output: Hello, my name is undefined, I'm the undefined
+                //Employee.prototype.run(); // output: undefined is running.
+                //Employee.prototype.walk(); //throw an error: Object doesn't support property or method 'walk' 
+                let jack = Object.create(Employee.prototype, {
+                    name: {
+                        value: "Jack",
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    },
+                    title: {
+                        value: "Manager",
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    }
+                });
+                //jack.sayHello(); // output: Hello, my name is Jack, I'm the Manager
+                //alert(Employee.prototype.isPrototypeOf(jack)); // output: true
+                //jack.run(); // output: Jack is running.
+                //jack.walk(); // throw an error: Object doesn't support property or method 'walk'
+                //Employee.prototype.sayHello.call(jane); // output: Hello, my name is Jane, I'm the Accountant.
+                //Person.prototype.sayHello.call(jane); // output: Hello, my name is Jane.
+
+                //var jane = new Employee("Jane", "Accountant");
+                let y = {};
+                y.prototype = jane;
+                //y.sayHello(); // throw an error: Object doesn't support property or method 'sayHello'
+                //y.run(); // throw an error: Object doesn't support property or method 'run'
+                //y.walk(); // throw an error: Object doesn't support property or method 'walk'
+
+                let z = function () {};
+                z.prototype = Object.create(jane);
+                z.prototype.constructor = z;
+                let zi = new z();
+                //zi.sayHello(); // output: Hello, my name is Jane, I'm the Accountant.
+                //zi.run(); // output: Jane is running.
+                //zi.walk(); // output: Jane is walking.
+                //alert(jane.isPrototypeOf(zi)); // output: true              
+                //alert(z.prototype.constructor);
+                //alert(z.constructor);
+                //alert(compareObj(zi, jane)); // output: false
+                //alert(compareContent(zi, jane)); // output: false
+                //alert(deepCompare(zi, jane)); // output: false
+                
+                let a = function () {};
+                a.prototype = Object.create({a:2});
+                a.prototype.constructor = a;
+                //a.prototype = Object.create(null);
+                let ai = new a();
+                //alert(z.prototype === a.prototype); // output: false
+                //alert(compareObj(z.prototype, a.prototype)); // output: true   
+                //alert(compareContent(z.prototype, a.prototype)); // throw an error: Object doesn't support property or method 'isPrototypeOf'
+                //alert(z.prototype.isPrototypeOf(a.prototype)); // output: false
+                //alert(a.prototype.isPrototypeOf(z.prototype)); // throw an error: Object doesn't support property or method 'isPrototypeOf'
+                //Note that compareObj & compareContent function may change
+                //alert(deepCompare(z.prototype, a.prototype));  // throw an error: Number Expected
+                //alert(z.prototype.constructor); // the output is the Employee's constructor
+                //alert(a.prototype.constructor); // output: undefined
+                //alert(z === a); // output: false
+                //alert(compareObj(z, a)); // output: true 
+                //alert(compareContent(z, a)); // output: false 
+                //alert(deepCompare(z, a)); // output: true       
+                //alert(compareObj(zi, ai)); // output: true 
+                //alert(compareContent(zi, ai, true)); // output: false 
+                //alert(deepCompare(zi, ai)); // output: false 
+                //alert(zi.constructor.toString());         
+                //alert(ai.constructor.toString());
+                //test end - 5
+
+                //test start - 6
+                let b = Object.create(jane);
+                //alert(compareObj(b, jane)); // output: false
+                //alert(Object.keys(b).length + " -- " + Object.keys(jane).length); // output: 0 -- 3
+                //txt = outputObj(b);
+                //txt += "===========================<br>";
+                //txt += outputObj(jane); // output: the object output are the same
+                c = function (name) {
+                    this.name = name;
+                    this.constructor.prototype.sayHello = function(){
+                        alert("Hello, " + this.name);
+                    };
+                    alert("hello");
+                };
+                function d(name) {
+                    this.name = name;
+                    d.prototype.sayHello = function(){
+                        alert("Hello, " + this.name);
+                    };
+                    alert("hello");
+                };
+                c.prototype = {a: 1};
+                d.prototype = {b: 1};
+                //let g = new c("Jason"); // output: hello 
+                //let h = new d("Jason"); // output: hello
+                //g.sayHello(); // output: Hello, Jason
+                //c.prototype.sayHello(); // output: Hello, undefined
+                //h.sayHello(); // output: Hello, Jason
+                //d.prototype.sayHello(); // output: Hello, undefined
+                function i(name) {
+                    this.name = name;
+                    this.sayHello = function(){
+                        alert("Hello, " + this.name);
+                    };
+                    alert("hello");
+                };
+                //i.prototype.sayHello();//throw an error: Object doesn't support property or method 'sayHello'
+                j = function (name) {
+                    this.name = name;
+                    this.constructor.prototype.sayHello = function(){
+                        alert("Hello, " + this.name);
+                    };
+                    alert("hello");
+                };
+                //let k = new j("Jason"); // output: hello
+                //alert(g.constructor === k.constructor); // output: false 
+                //let l = new j("Jason"); // output: hello
+                //alert(k.constructor === l.constructor); // output: true 
+                //alert(compareObj({}.constructor, [].constructor)); // output: false
+                //alert(compareContent({}.constructor, [].constructor)); // output: false
+                //alert(deepCompare({}.constructor, [].constructor)); // output: false             
+
+                let e = {a: 1, b: 2, c: 3}, f = {a: 1, b: 2, c: 3};
+                //alert(compareContent(e, f));// output: true 
+                //alert(compareObj(e, f)); // output: true 
+                //alert(deepCompare(e, f)); // output: true 
+                e.prototype = {d: 4};
+                f.prototype = {d: 4};
+                //alert(compareContent(e, f));// output: false 
+                //alert(compareObj(e, f)); // output: true 
+                //alert(deepCompare(e, f)); // output: false 
+                //test end - 6
+                
+                let m = function(){alert("HI");};
+                let n = function(){alert("HI");};
+                //alert(typeof m.prototype);
+                //alert(m.prototype === Object.prototype); // output: false 
+                //alert(m.prototype === null); // output: false 
+                //alert(m.prototype === n.prototype); // output: false 
+                //alert(compareContent(m.prototype, n.prototype));// output: true 
+                //alert(compareObj(m.prototype, n.prototype)); // output: true 
+                //alert(deepCompare(m.prototype, n.prototype)); // output: false 
+                //alert(compareObj(m.prototype, {})); // output: false 
+                //txt = outputObj(m.prototype); // output:[Empty Object]
+                //alert(m.constructor === n.constructor); // output: true
+                //alert(m.constructor === function(){}.constructor); // output: true
+                let q = {a:1};
+                //alert(q.constructor === {}.constructor); // output: true
+                //alert(function(){}.prototype === function(){}.prototype); // output: false
+                //alert(function(){}.prototype.constructor === function(){}.prototype.constructor); // output: false 
+                //alert(typeof function(){}.prototype.constructor); // output: function
+                //alert(n.prototype.constructor.toString() === function(){}.prototype.constructor.toString());// output: false
+                //alert(n.prototype.constructor); //output: function(){alert("HI");};
+                //alert(n.prototype.constructor === n); // output: true
+                //alert(function(){}.prototype.constructor);output: function(){};
+                //alert(Object.prototype.constructor);
+                
+
+            } catch (err) {
+                alert(err.message);
+            }
+            
+
+            $(document).ready(function () {
+                try {
+
+                    function Foo() {}
+                    function Bar() {}
+                    function Baz() {}
+                    Bar.prototype = Object.create(Foo.prototype);
+                    Baz.prototype = Object.create(Bar.prototype);
+                    var baz = new Baz();
+                    console.log(Baz.prototype.isPrototypeOf(baz)); // true
+                    console.log(Bar.prototype.isPrototypeOf(baz)); // true
+                    console.log(Foo.prototype.isPrototypeOf(baz)); // true
+                    console.log(Object.prototype.isPrototypeOf(baz)); // true
+
+                    $("#show").on("click", function () {
+                        $("#demo").html(txt);
+                    });
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+        </script>
+    </body>
+</html>

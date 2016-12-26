@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>jstest</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../jquery-3.1.1.js"></script>
+        <script>
+            function my() {
+                alert("Hello!");
+                return false;
+            }
+
+
+
+            $(document).ready(function () {
+                try {
+                    txt = "Hello, World!";
+
+                    $("#show").on("click", function () {
+                        $("#demo").html(txt);
+                    });
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+        </script>
+
+    </head>
+    <body>
+        <h1>This is a JS Test</h1>
+
+        <button name="b1" id="show">Click me!</button>
+        <p></p>
+        <div id="demo"></div>
+    </body>
+</html>

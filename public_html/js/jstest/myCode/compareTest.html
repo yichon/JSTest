@@ -62,6 +62,7 @@
                 //alert(deepCompare(a, b));// output: true
                 // test end - 1
 
+                // test start - 2
                 let c = function () {};
                 c.prototype = Object.create(jane);
                 c.prototype.constructor = c;
@@ -90,10 +91,11 @@
                 //alert(d.prototype.hasOwnProperty); //output: undefined
                 //alert(c.prototype === d.prototype); // output: false
                 //alert(compareObj(c.prototype, d.prototype)); // output: true   
-                alert(compareContent(c.prototype, d.prototype)); // output: true/false
+                //alert(compareContent(c.prototype, d.prototype)); // output: true/false
                 //enumerable "constructor"
-                alert(JSON.stringify(Object.keys(c.prototype))); // output: []
-                alert(JSON.stringify(Object.keys({}))); // output: ["constructor"]
+                //alert(JSON.stringify(Object.keys(c.prototype))); // output: ["constructor"]
+                //alert(JSON.stringify(Object.keys({}))); // output: []
+                //alert(({}.constructor).toString()); // output: []
                 //alert(deepCompare(c.prototype, d.prototype)); // output: false //throw an error: Number Expected
                 
                 //alert(c.prototype.isPrototypeOf(d.prototype)); // output: false
@@ -110,8 +112,55 @@
                 //alert(compareContent(ci, di, true)); // output: false 
                 //alert(deepCompare(ci, di)); // output: false 
                 //alert(ci.constructor.toString());         
-                //alert(di.constructor.toString());
+                //alert(di.constructor.toString());            
+                // test end - 2
 
+                // test start - 3
+                let e = Object.create({name: "Jack", title:"Manager"});
+                let f = Object.create({name: "Jack"}, {
+                    title: {
+                        value: "Manager",
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    }
+                });
+                let g = Object.create({title:"Manager"}, {
+                    name: {
+                        value: "Jack",
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    }
+                });
+                let h = Object.create({}, {
+                    name: {
+                        value: "Jack",
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    },
+                    title: {
+                        value: "Manager",
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    }
+                });
+                //alert(compareContent(e, f, true)); // output: false 
+                //alert(compareContent(e, g, true)); // output: false
+                alert(compareContent(e, h, true)); // output: false
+                alert(compareContent(f, g, true)); // output: false 
+                //alert(deepCompare(e, f)); // output: false       
+                //alert(deepCompare(f, g)); // output: false       
+
+                
+
+                // test end - 3
+                
+                // test start - 2
+                
+                // test end - 2
 
             } catch (err) {
                 alert(err.message);

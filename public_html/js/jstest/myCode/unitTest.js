@@ -2,26 +2,25 @@
 function test1(obj, func, input, expected, counter, cpf) {
     try {
         var ct = (typeof counter === 'number' && !isNaN(counter)) ? counter : 1;
-        if (!(typeof obj === "object" || typeof obj === "function"))
-            throw "[*Parameter Error]: 'obj' should be an object or function";
-        if (obj === null)
-            throw "[*Parameter Error]: 'obj' is null";
-        if (typeof func !== 'string')
-            throw "[*Parameter Error]: 'func' - not a string";
-        if (typeof obj[func] !== 'function')
-            throw "[*Parameter Error]: 'obj[func]' - undefined or illegal type";
-        if (!(input instanceof Array || input === null || input === undefined))
-            throw "[*Parameter Error]: 'input' - illegal type";
-        if ((typeof counter !== 'number') || isNaN(counter))
-            throw "[*Parameter Error]: 'counter' - not a number";
-
-//        if (!(typeof obj === "object" || typeof obj === "function") ||
-//                obj === null || (typeof func !== 'string') ||
-//                typeof obj[func] !== 'function' ||
-//                !(input instanceof Array || input === null || input === undefined) ||
-//                (typeof counter !== 'number') || isNaN(counter)) {
-//            throw "[*Parameter Error]";
-//        }
+        let checkParameter = function (obj, func, input, expected, counter, cpf) {
+            var e = new Error("Default");
+            e.name = "ParameterError";
+            if (!(typeof obj === "object" || typeof obj === "function"))
+                e.message = "'obj' should be an object or function";
+            if (obj === null)
+                e.message = "'obj' is null";
+            if (typeof func !== 'string')
+                e.message = "'func' - not a string";
+            if (typeof obj[func] !== 'function')
+                e.message = "'obj[func]' - undefined or illegal type";
+            if (!(input instanceof Array || input === null || input === undefined))
+                e.message = "'input' - illegal type";
+            if ((typeof counter !== 'number') || isNaN(counter))
+                e.message = "'counter' - not a number";
+            if (e.message !== "Default")
+                throw e;
+        };
+        checkParameter(obj, func, input, expected, counter, cpf);
 
         let compare = cpf ? cpf : function (a, b) { // compare primitive values? or Objects?
             return a === b;
@@ -36,7 +35,11 @@ function test1(obj, func, input, expected, counter, cpf) {
                 output, ";", "Expected: " + expected);
 
     } catch (err) {
-        console.log((ct++) + ".", err);
+        if (expected.error && expected.error === err.message)
+            console.log((ct++) + ".", "[Success]:", "Output:",
+                    err.message, ";", "Expected: " + expected.error);
+        else
+            console.log((ct++) + ".", "[*" + err.name + "]:", err.message);
     }
     return ct;
 }
@@ -60,25 +63,25 @@ function test1x(list, counter, cpf) {
 function testMI(obj, func, inputlist, expected, counter, cpf) {
     try {
         var ct = (typeof counter === 'number' && !isNaN(counter)) ? counter : 1;
-        if (!(typeof obj === "object" || typeof obj === "function"))
-            throw "[*Parameter Error]: 'obj' should be an object or function";
-        if (obj === null)
-            throw "[*Parameter Error]: 'obj' is null";
-        if (typeof func !== 'string')
-            throw "[*Parameter Error]: 'func' is not string";
-        if (typeof obj[func] !== 'function')
-            throw "[*Parameter Error]: obj[func] - undefined or illegal type";
-        if (!(inputlist instanceof Array) || !(inputlist[0] instanceof Array))
-            throw "[*Parameter Error]: inputlist - illegal type";
-        if ((typeof counter !== 'number') || isNaN(counter))
-            throw "[*Parameter Error]: 'counter' - not a number";
-//        if (!(typeof obj === "object" || typeof obj === "function") ||
-//                obj === null || (typeof func !== 'string') ||
-//                typeof obj[func] !== 'function' || !(inputlist instanceof Array) ||
-//                !(inputlist[0] instanceof Array) ||
-//                (typeof counter !== 'number') || isNaN(counter)) {
-//            throw "[*Parameter Error]";
-//        }
+        let checkParameter = function (obj, func, inputlist, expected, counter, cpf) {
+            var e = new Error("Default");
+            e.name = "ParameterError";
+            if (!(typeof obj === "object" || typeof obj === "function"))
+                e.message = "'obj' should be an object or function";
+            if (obj === null)
+                e.message = "'obj' is null";
+            if (typeof func !== 'string')
+                e.message = "'func' - not a string";
+            if (typeof obj[func] !== 'function')
+                e.message = "'obj[func]' - undefined or illegal type";
+            if (!(inputlist instanceof Array) || !(inputlist[0] instanceof Array))
+                e.message = "'input' - illegal type";
+            if ((typeof counter !== 'number') || isNaN(counter))
+                e.message = "'counter' - not a number";
+            if (e.message !== "Default")
+                throw e;
+        };
+        checkParameter(obj, func, inputlist, expected, counter, cpf);
         let compare = cpf ? cpf : function (a, b) {
             return a === b;
         };
@@ -90,7 +93,11 @@ function testMI(obj, func, inputlist, expected, counter, cpf) {
             console.log((ct++) + ".", "[" + result + "]:", "Output:", output, ";", "Expected: " + expected);
         }
     } catch (err) {
-        console.log(0 + ".", err);
+        if (expected.error && expected.error === err.message)
+            console.log((ct++) + ".", "[Success]:", "Output:",
+                    err.message, ";", "Expected: " + expected.error);
+        else
+            console.log(0 + ".", "[*" + err.name + "]:", err.message);
     }
     return ct;
 }

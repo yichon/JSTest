@@ -61,10 +61,10 @@
                 });
                 let b = Object.create({});
                 ctr = 1;
-                expected = false;
-                ctr = test1(this, "compareContent", [a, b], expected, ctr);
-                ctr = test1(this, "compareContent", [a, b, true], expected, ctr);
-                ctr = test1(this, "deepCompare", [a, b], expected, ctr);
+                expected = {value: false};
+                ctr = test1(this, "compareContent", [a, b], expected, ctr); // 1
+                ctr = test1(this, "compareContent", [a, b, true], expected, ctr); // 2
+                ctr = test1(this, "deepCompare", [a, b], expected, ctr); // 3
                 console.log("test end - (1)");
                 // test end - 1
 
@@ -80,53 +80,71 @@
                 //d.prototype = Object.create({});
                 d.prototype.constructor = d;
                 let di = new d();
-                
+
                 ctr = 1;
                 expected = "Hello, my name is Jane, I'm the Teacher.";
-                ctr = test1(ci, "sayHello", null, expected, ctr);
+                ctr = test1(ci, "sayHello", null, expected, ctr);  // 1
                 expected = "Jane is running.";
-                ctr = test1(ci, "run", null, expected, ctr);
+                ctr = test1(ci, "run", null, expected, ctr);  // 2
                 expected = "Jane is walking.";
-                ctr = test1(ci, "walk", null, expected, ctr);
-                
+                ctr = test1(ci, "walk", null, expected, ctr);  // 3
+
                 expected = true;
-                ctr = test1(jane, "isPrototypeOf", [ci], expected, ctr);             
+                ctr = test1(jane, "isPrototypeOf", [ci], expected, ctr);  // 4
                 expected = "function () {}";
-                ctr = test1(c.prototype.constructor, "toString", null, expected, ctr);
-               
-                testf = function(){return c.constructor === Function;};
+                ctr = test1(c.prototype.constructor, "toString", null, expected, ctr); // 5
+
+                testf = function () {
+                    return c.constructor === Function;
+                };
                 expected = true;
-                ctr = test1(this, "testf", null, expected, ctr);
-                
+                ctr = test1(this, "testf", null, expected, ctr); // 6
+
                 expected = false;
-                ctr = test1(this, "compareContent", [ci, jane], expected, ctr);
-                ctr = test1(this, "deepCompare", [ci, jane], expected, ctr);
-                
-                testf = function(){return Object.create(null) === null;};
+                ctr = test1(this, "compareContent", [ci, jane], expected, ctr); // 7
+                ctr = test1(this, "deepCompare", [ci, jane], expected, ctr); // 8
+
+                testf = function () {
+                    return Object.create(null) === null;
+                };
                 expected = false;
-                ctr = test1(this, "testf", null, expected, ctr);
+                ctr = test1(this, "testf", null, expected, ctr); // 9
                 //alert(typeof Object.create(null)); // output: object
-                
-                expected = {error: "'obj[func]' - undefined or illegal type"};
-                ctr = test1(d.prototype, "isPrototypeOf", [null], expected, ctr);
-                
-                //d.prototype.isPrototypeOf(null);// throw an error: Object doesn't support property or method 'isPrototypeOf'
-                //d.prototype.hasOwnProperty("a");// throw an error: Object doesn't support property or method 'hasOwnProperty'
-                //alert(d.prototype.isPrototypeOf); //output: undefined
-                //alert(d.prototype.hasOwnProperty); //output: undefined
-                //alert(c.prototype === d.prototype); // output: false
-                //alert(compareObj(c.prototype, d.prototype)); // output: true   
-                //alert(compareContent(c.prototype, d.prototype)); // output: true
-                //alert(compareContent(c.prototype, d.prototype, true)); // output: false
+
+                expected = {error: "method - not exist"};
+                ctr = test1(d.prototype, "isPrototypeOf", [null], expected, ctr); // 10
+                expected = {error: "method - not exist"};
+                ctr = test1(d.prototype, "hasOwnProperty", ["a"], expected, ctr); // 11
+
+                expected = undefined;
+                ctr = test1(d.prototype, "isPrototypeOf", undefined, expected, ctr); // 12
+                ctr = test1(d.prototype, "hasOwnProperty", undefined, expected, ctr); // 13
+
+                testf = function () {
+                    return c.prototype === d.prototype;
+                };
+                expected = false;
+                ctr = test1(this, "testf", null, expected, ctr); // 14
+
+                expected = false;
+                ctr = test1(this, "compareContent", [c.prototype, d.prototype], expected, ctr); // 15
+                ctr = test1(this, "compareContent", [c.prototype, d.prototype, true], expected, ctr); // 16
+                ctr = test1(this, "deepCompare", [c.prototype, d.prototype], expected, ctr); // 17
+
                 //enumerable "constructor"
+                expected = '["constructor"]';
+                ctr = test1(JSON, "stringify", Object.keys(c.prototype), expected, ctr); // 18
+                expected = '[]';
+                ctr = test1(JSON, "stringify", Object.keys({}), expected, ctr); // 19
+                expected = {type: "Array"};
+                ctr = test1(Object, "keys", [{}], expected, ctr); // 20
                 //alert(JSON.stringify(Object.keys(c.prototype))); // output: ["constructor"]
                 //alert(JSON.stringify(Object.keys({}))); // output: []
                 //alert(({}.constructor).toString()); // output: []
-                //alert(deepCompare(c.prototype, d.prototype)); // output: false //throw an error: Number Expected
-                
+
                 //alert(c.prototype.isPrototypeOf(d.prototype)); // output: false
                 //alert(c.prototype.isPrototypeOf(d.prototype)); // throw an error: Object doesn't support property or method 'isPrototypeOf'
-                
+
                 //alert(deepCompare(c.prototype, d.prototype));  // throw an error: Number Expected
                 //alert(c.prototype.constructor); // the output is the Employee's constructor
                 //alert(d.prototype.constructor); // output: undefined
@@ -139,12 +157,12 @@
                 //alert(deepCompare(ci, di)); // output: false 
                 //alert(ci.constructor.toString());         
                 //alert(di.constructor.toString());     
-                console.log("test end - (2)");       
+                console.log("test end - (2)");
                 // test end - 2
 
                 // test start - 3
                 console.log("test start - (3)");
-                let e = Object.create({name: "Jack", title:"Manager"});
+                let e = Object.create({name: "Jack", title: "Manager"});
                 let f = Object.create({name: "Jack"}, {
                     title: {
                         value: "Manager",
@@ -153,7 +171,7 @@
                         configurable: true
                     }
                 });
-                let g = Object.create({title:"Manager"}, {
+                let g = Object.create({title: "Manager"}, {
                     name: {
                         value: "Jack",
                         writable: true,
@@ -175,7 +193,7 @@
                         configurable: true
                     }
                 });
-                
+
                 output = undefined;
                 ctr = 1;
                 expected = false;
@@ -195,15 +213,15 @@
                     [f, h, true],
                     [g, h, true]
                 ];
-                
+
                 ctr = testMI(this, "compareContent", inputlist1, expected, ctr);
                 ctr = testMI(this, "compareContent", inputlist2, expected, ctr);
                 ctr = testMI(this, "deepCompare", inputlist1, expected, ctr);
                 console.log("test end - (3)");
                 // test end - 3
-                
+
                 // test start - 2
-                
+
                 // test end - 2
 
             } catch (err) {

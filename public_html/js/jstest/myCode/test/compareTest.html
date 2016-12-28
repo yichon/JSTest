@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="../../../jquery-3.1.1.js"></script>
         <script src="../obj.js"></script>
-        <script src="../myTest.js"></script>
+        <script src="../unitTest.js"></script>
 
     </head>
     <body>
@@ -20,14 +20,14 @@
                 function Person(name) {
                     this.name = name;
                     this.walk = function () {
-                        alert(this.name + " is walking.");
+                        return this.name + " is walking.";
                     };
                 }
                 Person.prototype.run = function () {
-                    alert(this.name + " is running.");
+                    return this.name + " is running.";
                 };
                 Person.prototype.sayHello = function () {
-                    alert("Hello, my name is " + this.name + ".");
+                    return "Hello, my name is " + this.name + ".";
                 };
                 function Employee(name, title) {
                     Person.call(this, name);
@@ -36,14 +36,15 @@
                 Employee.prototype = Object.create(Person.prototype);
                 Employee.prototype.constructor = Employee;
                 Employee.prototype.sayHello = function () {
-                    alert("Hello, my name is " + this.name + ", I'm the " + this.title + ".");
+                    return "Hello, my name is " + this.name + ", I'm the " + this.title + ".";
                 };
 
                 var jane = new Employee("Jane", "Teacher");
-                var ro = {};
+                var testf;
                 var ctr = 1;
                 var expected;
                 // test start - 1  owned inenumerable properties
+                console.log("test start - (1)  owned inenumerable properties");
                 let a = Object.create({}, {
                     name: {
                         value: "Jack",
@@ -59,17 +60,16 @@
                     }
                 });
                 let b = Object.create({});
-                ro = {};
                 ctr = 1;
                 expected = false;
-                console.log("test start - (1)  owned inenumerable properties");
-                console.log((ctr++) + ".", (ro = tester(compareContent, [a, b], expected)).result, "; Output:", ro.output, ";", "Expected: " + expected);
-                console.log((ctr++) + ".", (ro = tester(compareContent, [a, b, true], expected)).result, "; Output:", ro.output, ";", "Expected: " + expected);
-                console.log((ctr++) + ".", (ro = tester(deepCompare, [a, b], expected)).result, "; Output:", ro.output, ";", "Expected: " + expected);
+                ctr = test1(this, "compareContent", [a, b], expected, ctr);
+                ctr = test1(this, "compareContent", [a, b, true], expected, ctr);
+                ctr = test1(this, "deepCompare", [a, b], expected, ctr);
                 console.log("test end - (1)");
                 // test end - 1
 
                 // test start - 2
+                console.log("test start - (2)");
                 let c = function () {};
                 c.prototype = Object.create(jane);
                 c.prototype.constructor = c;
@@ -81,17 +81,35 @@
                 d.prototype.constructor = d;
                 let di = new d();
                 
-                //ci.sayHello(); // output: Hello, my name is Jane, I'm the Accountant.
-                //ci.run(); // output: Jane is running.
-                //ci.walk(); // output: Jane is walking.
-                //alert(jane.isPrototypeOf(ci)); // output: true              
-                //alert(c.prototype.constructor); //output: function () {};
-                //alert(c.constructor); //output: 
-                //alert(compareContent(ci, jane)); // output: false
-                //alert(deepCompare(ci, jane)); // output: false
-
-                //alert(Object.create(null) === null); // output: false
+                ctr = 1;
+                expected = "Hello, my name is Jane, I'm the Teacher.";
+                ctr = test1(ci, "sayHello", null, expected, ctr);
+                expected = "Jane is running.";
+                ctr = test1(ci, "run", null, expected, ctr);
+                expected = "Jane is walking.";
+                ctr = test1(ci, "walk", null, expected, ctr);
+                
+                expected = true;
+                ctr = test1(jane, "isPrototypeOf", [ci], expected, ctr);             
+                expected = "function () {}";
+                ctr = test1(c.prototype.constructor, "toString", null, expected, ctr);
+               
+                testf = function(){return c.constructor === Function;};
+                expected = true;
+                ctr = test1(this, "testf", null, expected, ctr);
+                
+                expected = false;
+                ctr = test1(this, "compareContent", [ci, jane], expected, ctr);
+                ctr = test1(this, "deepCompare", [ci, jane], expected, ctr);
+                
+                testf = function(){return Object.create(null) === null;};
+                expected = false;
+                ctr = test1(this, "testf", null, expected, ctr);
                 //alert(typeof Object.create(null)); // output: object
+                
+                expected = {error: "'obj[func]' - undefined or illegal type"};
+                ctr = test1(d.prototype, "isPrototypeOf", [null], expected, ctr);
+                
                 //d.prototype.isPrototypeOf(null);// throw an error: Object doesn't support property or method 'isPrototypeOf'
                 //d.prototype.hasOwnProperty("a");// throw an error: Object doesn't support property or method 'hasOwnProperty'
                 //alert(d.prototype.isPrototypeOf); //output: undefined
@@ -120,10 +138,12 @@
                 //alert(compareContent(ci, di, true)); // output: false 
                 //alert(deepCompare(ci, di)); // output: false 
                 //alert(ci.constructor.toString());         
-                //alert(di.constructor.toString());            
+                //alert(di.constructor.toString());     
+                console.log("test end - (2)");       
                 // test end - 2
 
                 // test start - 3
+                console.log("test start - (3)");
                 let e = Object.create({name: "Jack", title:"Manager"});
                 let f = Object.create({name: "Jack"}, {
                     title: {
@@ -159,25 +179,26 @@
                 output = undefined;
                 ctr = 1;
                 expected = false;
-                console.log("test start - (3)");
-//                console.log((ctr++) + ".", tester(output = compareContent(e, f), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(e, g), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(e, h), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(f, g), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(f, h), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(g, h), expected), "; Output:", output, ";", "Expected: " + expected);              
-//                console.log((ctr++) + ".", tester(output = compareContent(e, f, true), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(e, g, true), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(e, h, true), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(f, g, true), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(f, h, true), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = compareContent(g, h, true), expected), "; Output:", output, ";", "Expected: " + expected);              
-//                console.log((ctr++) + ".", tester(output = deepCompare(e, f), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = deepCompare(e, g), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = deepCompare(e, h), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = deepCompare(f, g), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = deepCompare(f, h), expected), "; Output:", output, ";", "Expected: " + expected);
-//                console.log((ctr++) + ".", tester(output = deepCompare(g, h), expected), "; Output:", output, ";", "Expected: " + expected);
+                let inputlist1 = [
+                    [e, f],
+                    [e, g],
+                    [e, h],
+                    [f, g],
+                    [f, h],
+                    [g, h]
+                ];
+                let inputlist2 = [
+                    [e, f, true],
+                    [e, g, true],
+                    [e, h, true],
+                    [f, g, true],
+                    [f, h, true],
+                    [g, h, true]
+                ];
+                
+                ctr = testMI(this, "compareContent", inputlist1, expected, ctr);
+                ctr = testMI(this, "compareContent", inputlist2, expected, ctr);
+                ctr = testMI(this, "deepCompare", inputlist1, expected, ctr);
                 console.log("test end - (3)");
                 // test end - 3
                 

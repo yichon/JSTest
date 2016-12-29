@@ -63,16 +63,23 @@ function compareContent(o1, o2, mode) { // alert("mode:"+mode);
 
         // NaN === NaN returns false
         // and isNaN(undefined) returns true
-        if (isNaN(o1) && isNaN(o2) && typeof o1 === 'number' && typeof o2 === 'number')
+        if (typeof o1 === 'number' && typeof o2 === 'number' && 
+                isNaN(o1) && isNaN(o2))
             return true;
 
-
+        
         // if the program execute to here, it means they are primitive types but not equal.
         // or one is object, the other one is not, different types also return false
         return false;
 
         // if they're both objescts
     } else {
+        // typeof null ==> "object"
+        if(o1 === null || o2 === null)
+            return false;
+        // ...
+        if(o1 === Object.prototype || o2 === Object.prototype)
+            return false;
         // Comparing dates is a common scenario. Another built-ins?
         if ((o1 instanceof Date && o2 instanceof Date) ||
                 (o1 instanceof RegExp && o2 instanceof RegExp) ||
@@ -124,28 +131,31 @@ function compareContent(o1, o2, mode) { // alert("mode:"+mode);
                 return false;
             if (Object.getOwnPropertyNames(o1).length !== Object.getOwnPropertyNames(o2).length)
                 return false;
-
+            
             for (attr in o1) {
                 if (!(attr in o2))
                     return false;
                 else if (Object.prototype.hasOwnProperty.call(o1, attr) !==
                         Object.prototype.hasOwnProperty.call(o2, attr))
                     return false;
-                if (!arguments.callee(o1[attr], o2[attr], mode))
+                if (attr !== "constructor" && !arguments.callee(o1[attr], o2[attr], mode))
                     return false;
             }
-
-            if (Object.getOwnPropertyNames(o1).length !== Object.keys(o1).length) {
+            //console.log("Hello: ", Object.getOwnPropertyNames(o1).length, Object.keys(o1).length); // 1  0
+            if (Object.getOwnPropertyNames(o1).length !== Object.keys(o1).length) {//console.log("Hello!");
                 var pnames = Object.getOwnPropertyNames(o1);
                 var knames = Object.keys(o1);
-                for (var i = 0, k = true; i < pnames.length; i++) {
+                var k = true;
+                for (var i = 0; i < pnames.length; i++) {
                     for (var j = 0; j < knames.length; j++) {
                         if (pnames[i] === knames[j]) {
                             k = false;
                             break;
                         }
                     }
-                    if (k && !arguments.callee(o1[pnames[i]], o2[pnames[i]], mode))
+                    //console.log("Hello: ", pnames[i]);
+                    if (pnames[i] !== "constructor" && k && 
+                            !arguments.callee(o1[pnames[i]], o2[pnames[i]], mode))
                         return false;
                     k = true;
                 }

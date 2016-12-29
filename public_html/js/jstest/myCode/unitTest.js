@@ -48,12 +48,12 @@ function test1(obj, func, input, expected, counter, cpf) {
             throw e;
         } else
             throw "Unkown Error";
-        result = compare(output, expect) ? 'Success' : '*Failed';
+        result = compare(output, expect) ? 'PASS' : '*Failed';
     } catch (err) {
         if ("error" in expected) {
             output = err.message;
             expect = expected.error;
-            result = compare(output, expect) ? 'Success' : '*Failed';
+            result = compare(output, expect) ? 'PASS' : '*Failed';
         } else {
             output = "[*" + err.name + "]: " + err.message;
             expect = ("value" in expected) ? expected.value :

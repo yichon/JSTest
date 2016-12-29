@@ -63,13 +63,17 @@
                     let b = Object.create({});
                     ctr = 1;
                     expected = {value: false};
-                    ctr = test1(this, "compareContent", [a, b], expected, ctr); // 1
-                    ctr = test1(this, "compareContent", [a, b, true], expected, ctr); // 2
+                    ctr = test1(this, "compareContent", [a, b, true], expected, ctr); // 1
+                    expected = {value: true}; // Failed ?
+                    ctr = test1(this, "compareContent", [a, b], expected, ctr); // 2
                     ctr = test1(this, "deepCompare", [a, b], expected, ctr); // 3
                     console.log("test end - (1)");
                 }
                 // test end - 1
-
+//                a = 015;
+//                alert(typeof +a); // number
+//                alert(+a); // 15
+//                alert(String(+a));
                 // test start - 2
                 {
                     console.log("test start - (2)");
@@ -84,89 +88,41 @@
                     d.prototype.constructor = d;
                     let di = new d();
                     ctr = 1;
-                    
-//                    expected = {value: "Hello, my name is Jane, I'm the Teacher."};
-//                    ctr = test1(ci, "sayHello", null, expected, ctr);  // 1
-//                    expected = {value: "Jane is running."};
-//                    ctr = test1(ci, "run", null, expected, ctr);  // 2
-//                    expected = {value: "Jane is walking."};
-//                    ctr = test1(ci, "walk", null, expected, ctr);  // 3
-//
-//                    expected = {value: true};
-//                    ctr = test1(jane, "isPrototypeOf", [ci], expected, ctr);  // 4
-//                    expected = {value: "function () {}"};
-//                    ctr = test1(c.prototype.constructor, "toString", null, expected, ctr); // 5
-//
-//                    testf = function () {
-//                        return c.constructor === Function;
-//                    };
-//                    expected = {value: true};
-//                    ctr = test1(this, "testf", null, expected, ctr); // 6
 
                     expected = {value: false};
-                    ctr = test1(this, "compareContent", [ci, jane], expected, ctr); // 7
-                    ctr = test1(this, "deepCompare", [ci, jane], expected, ctr); // 8
+                    ctr = test1(this, "compareContent", [ci, jane], expected, ctr); // 1
+                    ctr = test1(this, "deepCompare", [ci, jane], expected, ctr); // 2
 
-//                    testf = function () {
-//                        return Object.create(null) === null;
-//                    };
-//                    expected = {value: false};
-//                    ctr = test1(this, "testf", null, expected, ctr); // 9
-//                    //alert(typeof Object.create(null)); // output: object
-//
-//                    expected = {error: "method - not exist"};
-//                    ctr = test1(d.prototype, "isPrototypeOf", [null], expected, ctr); // 10
-//                    expected = {error: "method - not exist"};
-//                    ctr = test1(d.prototype, "hasOwnProperty", ["a"], expected, ctr); // 11
-//
-//                    expected = {value: undefined};
-//                    ctr = test1(d.prototype, "isPrototypeOf", undefined, expected, ctr); // 12
-//                    ctr = test1(d.prototype, "hasOwnProperty", undefined, expected, ctr); // 13
-//
-//                    testf = function () {
-//                        return c.prototype === d.prototype;
-//                    };
-//                    expected = {value: false};
-//                    ctr = test1(this, "testf", null, expected, ctr); // 14
-
-//                    expected = {value: false};
-//                    ctr = test1(this, "compareContent", [c.prototype, d.prototype], expected, ctr); // 15
-//                    ctr = test1(this, "compareContent", [c.prototype, d.prototype, true], expected, ctr); // 16
-//                    ctr = test1(this, "deepCompare", [c.prototype, d.prototype], expected, ctr); // 17
-
-                    //enumerable "constructor"
-                    
-//                    expected = {value: '["constructor"]'};
-//                    ctr = test1(JSON, "stringify", [Object.keys(c.prototype)], expected, ctr); // 18
-//                    expected = {value: '[]'};
-//                    ctr = test1(JSON, "stringify", [Object.keys({})], expected, ctr); // 19
-//                    expected = {type: "array"};
-//                    ctr = test1(Object, "keys", [{}], expected, ctr); // 20
-                    
-                    //alert(({}.constructor).toString()); // output: []
-
-//                    expected = {value: false};
-//                    ctr = test1(c.prototype, "isPrototypeOf", [d.prototype], expected, ctr); // 21
-//                    expected = {error: "method - not exist"};
-//                    ctr = test1(c.prototype, "isPrototypeOf", [d.prototype], expected, ctr); // 22
                     expected = {error: "Number expected"};
-                    ctr = test1(this, "deepCompare", [c.prototype, d.prototype], expected, ctr); // 23
+                    ctr = test1(this, "deepCompare", [c.prototype, d.prototype], expected, ctr); // 3
 
-//                    expected = {value: c};
-//                    ctr = test1(c.prototype, "constructor", undefined, expected, ctr); // 24
-//                    expected = {value: d};
-//                    ctr = test1(d.prototype, "constructor", undefined, expected, ctr); // 25
+                    expected = {value: false};                    
+                    ctr = test1(this, "compareContent", [c, d, true], expected, ctr); // 4                                       
+                    ctr = test1(this, "compareContent", [ci, di, true], expected, ctr); // 5                   
+                    expected = {value: true}; // Failed ?
+                    ctr = test1(this, "compareContent", [c, d], expected, ctr); // 6 
+                    ctr = test1(this, "deepCompare", [c, d], expected, ctr); // 7 
+                    ctr = test1(this, "compareContent", [ci, di], expected, ctr); // 8 
+                    expected = {error: "Number expected"}; // Failed ?
+                    ctr = test1(this, "deepCompare", [ci, di], expected, ctr); // 9
                     
-                    //alert(c.prototype.constructor); // the output is the Employee's constructor
-                    //alert(d.prototype.constructor); // output: undefined
-
+                    expected = {value: true};
+                    ctr = test1(this, "compareContent", [ci.__proto__, c.prototype], expected, ctr); // 10
+                    ctr = test1(this, "compareContent", [ci.__proto__, c.prototype, true], expected, ctr); // 11
+                    ctr = test1(this, "deepCompare", [ci.__proto__, c.prototype], expected, ctr); // 12            
+                    ctr = test1(this, "compareContent", [Object.create(null), Object.create(null)], expected, ctr); // 13
+                    ctr = test1(this, "compareContent", [Object.create(null), Object.create(null), true], expected, ctr); // 14                                   
+                    expected = {value: false}; // Failed ?                    
+                    ctr = test1(this, "compareContent", [di.__proto__, d.prototype], expected, ctr); // 15
+                    ctr = test1(this, "compareContent", [di.__proto__, d.prototype, true], expected, ctr); // 16                     
+                    expected = {error: "Number expected"}; // Failed ?
+                    ctr = test1(this, "deepCompare", [di.__proto__, d.prototype], expected, ctr); // 17                   
+                    ctr = test1(this, "deepCompare", [Object.create(null), Object.create(null), true], expected, ctr); // 18
+                    
                     expected = {value: false};
-                    ctr = test1(this, "compareContent", [c, d, true], expected, ctr); // 26
-                    ctr = test1(this, "deepCompare", [c, d], expected, ctr); // 27
-                    ctr = test1(this, "compareContent", [ci, di, true], expected, ctr); // 28
-                    ctr = test1(this, "deepCompare", [ci, di], expected, ctr); // 29
-                    //alert(ci.constructor.toString());         
-                    //alert(di.constructor.toString());     
+                    ctr = test1(this, "compareContent", [undefined, Object.create(null), true], expected, ctr); // 19 
+                    expected = {error: "Number expected"}; // Failed ?
+                    ctr = test1(this, "deepCompare", [undefined, Object.create(null), true], expected, ctr); // 20  
                     console.log("test end - (2)");
                 }
                 // test end - 2
@@ -239,53 +195,87 @@
                     ctr = 1;
                     expected = {value: true};
                     ctr = test1(this, "compareContent", [a, b], expected, ctr); // 1
-                    ctr = test1(this, "deepCompare", [a, b], expected, ctr); // 2
-                    //alert(compareContent(e, f));// output: true 
-                    //alert(deepCompare(e, f)); // output: true 
+                    ctr = test1(this, "compareContent", [a, b, true], expected, ctr); // 2
+                    ctr = test1(this, "deepCompare", [a, b], expected, ctr); // 3
                     a.prototype = {d: 4};
                     b.prototype = {d: 4};
-                    //alert(compareContent(e, f));// output: false 
-                    //alert(deepCompare(e, f)); // output: false             
+                    expected = {value: true};
+                    ctr = test1(this, "compareContent", [a, b], expected, ctr); // 4
+                    ctr = test1(this, "compareContent", [a, b, true], expected, ctr); // 5
+                    expected = {value: false}; // Failed ?
+                    ctr = test1(this, "deepCompare", [a, b], expected, ctr); // 6
                     let m = function () {
                         alert("HI");
                     };
                     let n = function () {
                         alert("HI");
                     };
-                    //alert(typeof m.prototype);
-                    //alert(m.prototype === Object.prototype); // output: false 
-                    //alert(m.prototype === null); // output: false 
-                    //alert(m.prototype === n.prototype); // output: false 
-                    //alert(compareContent(m.prototype, n.prototype));// output: true 
-                    //alert(compareObj(m.prototype, n.prototype)); // output: true 
-                    //alert(deepCompare(m.prototype, n.prototype)); // output: false 
-                    //alert(compareObj(m.prototype, {})); // output: false 
-                    //txt = outputObj(m.prototype); // output:[Empty Object]
-                    //alert(m.constructor === n.constructor); // output: true
-                    //alert(m.constructor === function(){}.constructor); // output: true
+
+                    expected = {value: true};
+                    ctr = test1(this, "compareContent", [m.prototype, n.prototype], expected, ctr); // 7
+                    ctr = test1(this, "compareContent", [m.prototype, n.prototype, true], expected, ctr); // 8
+                    ctr = test1(this, "compareContent", [m.prototype.constructor, m, true], expected, ctr); // 9
+                    ctr = test1(this, "compareContent", [m.constructor, n.constructor, true], expected, ctr); // 10
+                    ctr = test1(this, "compareContent", [m.constructor, function(){}.constructor, true], expected, ctr); // 11
+                    expected = {value: false}; // Failed ?
+                    ctr = test1(this, "deepCompare", [m.prototype, n.prototype], expected, ctr); // 12
+
+                    let x = Object.create(Object.prototype);
+                    let y = Object.prototype;
+                    let z = {};
+                    x.constructor = m;
+                    //y.constructor = m;
+                    z.constructor = m;
+                    expected = {value: false};
+                    ctr = test1(this, "compareContent", [m.prototype, x, true], expected, ctr); // 13
+                    ctr = test1(this, "compareContent", [m.prototype, y, true], expected, ctr); // 14
+                    ctr = test1(this, "compareContent", [m.prototype, z, true], expected, ctr); // 15
+
+//                    console.dir(m.prototype);
+//                    console.dir(z);
+
                     let q = {a: 1};
-                    //alert(q.constructor === {}.constructor); // output: true
-                    //alert(function(){}.prototype === function(){}.prototype); // output: false
-                    //alert(function(){}.prototype.constructor === function(){}.prototype.constructor); // output: false 
-                    //alert(typeof function(){}.prototype.constructor); // output: function
-                    //alert(n.prototype.constructor.toString() === function(){}.prototype.constructor.toString());// output: false
-                    //alert(n.prototype.constructor); //output: function(){alert("HI");};
-                    //alert(n.prototype.constructor === n); // output: true
-                    //alert(function(){}.prototype.constructor);output: function(){};
-                    //alert(Object.prototype.constructor);
+                    expected = {value: true};
+                    ctr = test1(this, "compareContent", [q.constructor, {}.constructor, true], expected, ctr); // 16
+                    ctr = test1(this, "compareContent", [function(){}.prototype, function(){}.prototype, true], expected, ctr); // 17
+                    ctr = test1(this, "compareContent", [function(){}.prototype.constructor, function(){}.prototype.constructor, true], expected, ctr); // 18
+                    
                     console.log("test end - (4)");
                 }
                 // test end - 4
-
+                //console.dir(Person);
                 // test start - 5
                 {
-
+                    console.log("test start - (5)");
+                    expected = {value: true};
+                    ctr = 1;
+                    ctr = test1(this, "compareContent", [jane.__proto__.__proto__.__proto__, Object.prototype, true], expected, ctr); // 1
+                    ctr = test1(this, "compareContent", [Object.prototype.__proto__, {}, true], expected, ctr); // 2
+                    ctr = test1(this, "compareContent", [Object.prototype.__proto__, null, true], expected, ctr); // 3
+                    ctr = test1(this, "compareContent", [Object.prototype.__proto__, {a: 1}, true], expected, ctr); // 4
+                    ctr = test1(this, "compareContent", [null, {a: 1}, true], expected, ctr); // 5
+                    ctr = test1(this, "deepCompare", [null, {a: 1}], expected, ctr); // 6
+                    console.log(Object.prototype.__proto__ === null);
+                    console.log(jane.__proto__.__proto__.__proto__ === Object.prototype);
+                    console.log("__proto__" in jane);
+                    console.log("__proto__" in Object.prototype);
+                    console.log("__proto__" in Object.create(null));
+                    console.log(Person.sleep);
+                    console.log(isNaN(null));
+                    console.log(isNaN({a: 1}));
+                    
+                    //console.log(isNaN(Object.create(null)));
+                    // Object.create(null)
+                    console.log(typeof ({}.__proto__.__proto__));
+                    console.dir(Object.prototype);
+                    
+                    console.log("test end - (5)");
                 }
                 // test end - 5
 
                 // test start - 6
                 {
-                    
+
                 }
                 // test end - 6
 

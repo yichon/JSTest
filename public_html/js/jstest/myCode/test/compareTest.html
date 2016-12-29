@@ -145,18 +145,20 @@
                 expected = {error: "method - not exist"};
                 ctr = test1(c.prototype, "isPrototypeOf", [d.prototype], expected, ctr); // 22
                 expected = {error: "Number expected"};
-                ctr = test1(this, "deepCompare", [c.prototype, d.prototype], expected, ctr); // 22
-
-                //alert(deepCompare(c.prototype, d.prototype));  // throw an error: Number Expected
+                ctr = test1(this, "deepCompare", [c.prototype, d.prototype], expected, ctr); // 23
+                
+                expected = {value: c};
+                ctr = test1(c.prototype, "constructor", undefined, expected, ctr); // 24
+                expected = {value: d};
+                ctr = test1(d.prototype, "constructor", undefined, expected, ctr); // 25
                 //alert(c.prototype.constructor); // the output is the Employee's constructor
                 //alert(d.prototype.constructor); // output: undefined
-                //alert(c === d); // output: false
-                //alert(compareObj(c, d)); // output: true 
-                //alert(compareContent(c, d, true)); // output: false 
-                //alert(deepCompare(c, d)); // output: true       
-                //alert(compareObj(ci, di)); // output: true 
-                //alert(compareContent(ci, di, true)); // output: false 
-                //alert(deepCompare(ci, di)); // output: false 
+                
+                expected = {value: false};
+                ctr = test1(this, "compareContent", [c, d, true], expected, ctr); // 26
+                ctr = test1(this, "deepCompare", [c, d], expected, ctr); // 27
+                ctr = test1(this, "compareContent", [ci, di, true], expected, ctr); // 28
+                ctr = test1(this, "deepCompare", [ci, di], expected, ctr); // 29
                 //alert(ci.constructor.toString());         
                 //alert(di.constructor.toString());     
                 console.log("test end - (2)");

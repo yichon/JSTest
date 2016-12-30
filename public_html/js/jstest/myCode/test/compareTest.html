@@ -61,12 +61,13 @@
                         }
                     });
                     let b = Object.create({});
-                    ctr = 1;
+                    ctr = 1;                   
                     expected = {value: false};
                     ctr = test1(this, "compareContent", [a, b, true], expected, ctr); // 1
                     expected = {value: true}; // Failed ?
                     ctr = test1(this, "compareContent", [a, b], expected, ctr); // 2
                     ctr = test1(this, "deepCompare", [a, b], expected, ctr); // 3
+                    ctr.stat();
                     console.log("test end - (1)");
                 }
                 // test end - 1
@@ -123,6 +124,8 @@
                     ctr = test1(this, "compareContent", [undefined, Object.create(null), true], expected, ctr); // 19 
                     expected = {error: "Number expected"}; // Failed ?
                     ctr = test1(this, "deepCompare", [undefined, Object.create(null), true], expected, ctr); // 20  
+                    
+                    ctr.stat();
                     console.log("test end - (2)");
                 }
                 // test end - 2
@@ -185,6 +188,8 @@
                     ctr = testM(this, "compareContent", inputlist1, expected, ctr);
                     ctr = testM(this, "compareContent", inputlist2, expected, ctr);
                     ctr = testM(this, "deepCompare", inputlist1, expected, ctr);
+                    
+                    ctr.stat();
                     console.log("test end - (3)");
                 }
                 // test end - 3
@@ -240,6 +245,7 @@
                     ctr = test1(this, "compareContent", [function(){}.prototype, function(){}.prototype, true], expected, ctr); // 17
                     ctr = test1(this, "compareContent", [function(){}.prototype.constructor, function(){}.prototype.constructor, true], expected, ctr); // 18
                     
+                    ctr.stat();
                     console.log("test end - (4)");
                 }
                 // test end - 4

@@ -1,11 +1,33 @@
+function Log(index) {
+    this.index = (typeof index === 'number' && !isNaN(index)) ? index : 0;
+    this.result = undefined;
+    this.output = undefined;
+    this.expect = undefined;
+    this.failed = 0;
+    this.passed = 0;
+    this.current = function () {
+        console.log(this.index + ".", "[" + this.result + "]:", "Output:",
+                this.output, ";", "Expected: " + this.expect);
+    };
+    this.stat = function () {
+        let total = this.failed + this.passed;
+        let rate = total > 0 ? ((this.passed / total) * 100) : 0;
+        console.log("Total: " + total + ",",
+                "Failed: " + this.failed + ",",
+                "Passed: " + this.passed + ",",
+                "Stat: " + rate + "% Passed");
+    };
+}
 // only accept one input and one expected result
-function test1(obj, func, input, expected, counter, cpf) {
-    var ct = (typeof counter === 'number' && !isNaN(counter)) ? counter : 1;
-    var output, expect, result;
+function testO(obj, func, input, expected, log, cpf) {
+    if (!(log instanceof Log) ||
+            !((typeof log.index === 'number') && !isNaN(log.index)))
+        log = new Log(0);
     var compare = cpf ? cpf : function (a, b) { // compare primitive values? or Objects?
         return a === b;
     };
-    var checkParameter = function (obj, func, input, expected, counter, cpf) {
+    var output, expect, result;
+    var checkParameter = function (obj, func, input, expected, log, cpf) {
         var e = new Error("Default");
         e.name = "ParameterError";
         if (!(typeof obj === "object" || typeof obj === "function"))
@@ -23,13 +45,12 @@ function test1(obj, func, input, expected, counter, cpf) {
         if (!expected || typeof expected !== 'object' ||
                 !("value" in expected || "type" in expected || "error" in expected))
             e.message = "'expected' - illegal type";
-        if ((typeof counter !== 'number') || isNaN(counter))
-            e.message = "'counter' - not a number";
         if (e.message !== "Default")
             throw e;
     };
     try {
-        checkParameter(obj, func, input, expected, counter, cpf);
+        log.index++;
+        checkParameter(obj, func, input, expected, log, cpf);
         if (input === undefined) // property
             output = obj[func];
         else // method
@@ -48,39 +69,53 @@ function test1(obj, func, input, expected, counter, cpf) {
             throw e;
         } else
             throw "Unkown Error";
-        result = compare(output, expect) ? 'PASS' : '*Failed';
+        result = compare(output, expect) ? 'PASS' : 'Failed';
     } catch (err) {
         if ("error" in expected) {
             output = err.message;
             expect = expected.error;
-            result = compare(output, expect) ? 'PASS' : '*Failed';
+            result = compare(output, expect) ? 'PASS' : 'Failed';
         } else {
             output = "[*" + err.name + "]: " + err.message;
             expect = ("value" in expected) ? expected.value :
                     (("type" in expected) ? expected.type : "void");
-            result = '*Failed';
+            result = 'Failed';
         }
     }
-    console.log((ct++) + ".", "[" + result + "]:", "Output:",
-            output, ";", "Expected: " + expect);
-    return ct;
+    log.result = result;
+    log.output = output;
+    log.expect = expect;
+    if (result === 'PASS')
+        log.passed++;
+    else
+        log.failed++;
+    return log;
+}
+function test1(obj, func, input, expected, log, cpf) {
+    let lg = testO(obj, func, input, expected, log, cpf);
+    lg.current();
+    return lg;
 }
 //accept mutiple inputs and one expected result
-function testM(obj, func, inputlist, expected, counter, cpf) {
+function testM(obj, func, inputlist, expected, log, cpf) {
     try {
-        var ct = (typeof counter === 'number' && !isNaN(counter)) ? counter : 1;
+        if (!(log instanceof Log) ||
+                !((typeof log.index === 'number') && !isNaN(log.index)))
+            log = new Log(0);
+
         if (!(inputlist instanceof Array) || !(inputlist[0] instanceof Array)) {
             var e = new Error("'inputlist' - illegal type");
             e.name = "ParameterError";
             throw e;
         }
         for (let i in inputlist) {
-            ct = test1(obj, func, inputlist[i], expected, ct, cpf);
+            log = testO(obj, func, inputlist[i], expected, log, cpf);
+            log.current();
         }
     } catch (err) {
         console.log(0 + ".", "[*" + err.name + "]:", err.message);
     }
-    return ct;
+    return log;
 }
 //
 //function test1x(list, counter, cpf) {

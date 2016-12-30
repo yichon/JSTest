@@ -5,6 +5,19 @@ function isEmptyObj(e) {
         return false;
     return true;
 }
+//
+function Type(o){
+    if(o === null)
+        return "null";
+    if(o instanceof Array)
+        return "array";
+    if(typeof o === "number" && isNaN(o))
+        return "NaN";
+    return typeof o;
+}
+function compareType(o1, o2){
+    return Type(o1) ===  Type(o2);
+}
 // Finished
 function outputObj(o, decodeUrl) {
     if (typeof o !== "object")
@@ -49,7 +62,7 @@ function compareContent(o1, o2, mode) { // alert("mode:"+mode);
     // Especially useful on the step where we compare prototypes
     if (o1 === o2)
         return true;
-
+    //type();
     // as long as one argument is not object
     if (!(typeof o1 === 'object' && typeof o2 === 'object')) {
         // Works in case when functions are created in constructor.

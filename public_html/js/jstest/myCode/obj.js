@@ -1,3 +1,23 @@
+function type(o) {
+    var to = typeof o;
+    if (o === null)
+        return "null";
+    if (o instanceof Array)
+        return "array";
+    if (to === "number" && isNaN(o))
+        return "NaN";
+    try {
+        if (to === "object")
+            isNaN(o); //Object.create(null) & its descendants will throw an error         
+    } catch (err) {
+        return "nullobj";
+    }
+    return to;
+}
+//
+function compareType(o1, o2) {
+    return type(o1) === type(o2);
+}
 // Finished
 function isEmptyObj(e) {
     var t;
@@ -5,19 +25,7 @@ function isEmptyObj(e) {
         return false;
     return true;
 }
-//
-function Type(o){
-    if(o === null)
-        return "null";
-    if(o instanceof Array)
-        return "array";
-    if(typeof o === "number" && isNaN(o))
-        return "NaN";
-    return typeof o;
-}
-function compareType(o1, o2){
-    return Type(o1) ===  Type(o2);
-}
+
 // Finished
 function outputObj(o, decodeUrl) {
     if (typeof o !== "object")
@@ -56,42 +64,30 @@ function outputObj(o, decodeUrl) {
 
 // Building
 // Object.is() ?
-function compareContent(o1, o2, mode) { // alert("mode:"+mode);
-    // Compare primitives and functions.
-    // Check if both arguments link to the same object.
-    // Especially useful on the step where we compare prototypes
-    if (o1 === o2)
-        return true;
-    //type();
-    // as long as one argument is not object
-    if (!(typeof o1 === 'object' && typeof o2 === 'object')) {
-        // Works in case when functions are created in constructor.
-        // We can even handle functions passed across iframes
-        if ((typeof o1 === 'function' && typeof o2 === 'function')) {
-            if (o1.toString() !== o2.toString())
-                return false;
-            else
-                return arguments.callee(o1.prototype, o2.prototype, mode);
-        }
-
-        // NaN === NaN returns false
-        // and isNaN(undefined) returns true
-        if (typeof o1 === 'number' && typeof o2 === 'number' && 
-                isNaN(o1) && isNaN(o2))
+function compareContent(o1, o2, mode) {
+    var stack = [];
+    var sub = function (o1, o2, mode) {
+        // Compare primitives 
+        // Check if both arguments link to the same object or function.
+        // Especially useful on the step where we compare prototypes
+        if (o1 === o2)
             return true;
 
-        
-        // if the program execute to here, it means they are primitive types but not equal.
-        // or one is object, the other one is not, different types also return false
-        return false;
-
-        // if they're both objescts
-    } else {
-        // typeof null ==> "object"
-        if(o1 === null || o2 === null)
+        var o1_t = type(o1);
+        //different types means that they are not equal.
+        if (o1_t !== type(o2))
             return false;
+
+        // NaN === NaN returns false
+        if (o1_t === 'NaN')
+            return true;
+
+        // not object or function
+        if (typeof o1 !== 'object' && o1_t !== 'function')
+            return false;
+
         // ...
-        if(o1 === Object.prototype || o2 === Object.prototype)
+        if (o1 === Object.prototype || o2 === Object.prototype)
             return false;
         // Comparing dates is a common scenario. Another built-ins?
         if ((o1 instanceof Date && o2 instanceof Date) ||
@@ -100,6 +96,12 @@ function compareContent(o1, o2, mode) { // alert("mode:"+mode);
                 (o1 instanceof Number && o2 instanceof Number) ||
                 (o1 instanceof Boolean && o2 instanceof Boolean))
             return o1.toString() === o2.toString();
+
+        // ...
+        if (o1_t === 'function') {
+            if (o1.toString() !== o2.toString())
+                return false;
+        }
 
         // To compare o1.constructor.prototype & o2.constructor.prototype, just set the third parameter 'true'
         if (o1.constructor !== o2.constructor) {
@@ -144,7 +146,7 @@ function compareContent(o1, o2, mode) { // alert("mode:"+mode);
                 return false;
             if (Object.getOwnPropertyNames(o1).length !== Object.getOwnPropertyNames(o2).length)
                 return false;
-            
+
             for (attr in o1) {
                 if (!(attr in o2))
                     return false;
@@ -167,7 +169,7 @@ function compareContent(o1, o2, mode) { // alert("mode:"+mode);
                         }
                     }
                     //console.log("Hello: ", pnames[i]);
-                    if (pnames[i] !== "constructor" && k && 
+                    if (pnames[i] !== "constructor" && k &&
                             !arguments.callee(o1[pnames[i]], o2[pnames[i]], mode))
                         return false;
                     k = true;
@@ -175,8 +177,8 @@ function compareContent(o1, o2, mode) { // alert("mode:"+mode);
             }
             return true;
         }
-
-    }
+    };
+    return sub(o1, o2, mode);
 
 }
 

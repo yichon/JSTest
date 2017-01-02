@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Comparison Test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../../jquery-3.1.1.js"></script>
+        <script src="../obj.js"></script>
+        <script src="../util.js"></script>
+        <script src="../unitTest.js"></script>
+
+    </head>
+    <body>
+        <h1>This is a JS Test</h1>
+        <button name="b1" id="show">Click me!</button>
+        <p></p>
+        <div id="demo"></div>
+        <script></script>
+        <script>
+            try {
+                function Person(name) {
+                    this.name = name;
+                    this.walk = function () {
+                        return this.name + " is walking.";
+                    };
+                }
+                Person.prototype = Object.create(null);
+                Person.prototype.run = function () {
+                    return this.name + " is running.";
+                };
+                Person.prototype.sayHello = function () {
+                    return "Hello, my name is " + this.name + ".";
+                };
+                function Employee(name, title) {
+                    Person.call(this, name);
+                    this.title = title;
+                }
+                Employee.prototype = Object.create(Person.prototype);
+                Employee.prototype.constructor = Employee;
+                Employee.prototype.sayHello = function () {
+                    return "Hello, my name is " + this.name + ", I'm the " + this.title + ".";
+                };
+                var jim = new Person("Jim");
+                var jane = new Employee("Jane", "Teacher");
+                var sam = new Employee("Sam", "Toilet Guy");
+                var a = Object.create(null);
+                a.__proto__ = Object.create(Object.prototype);
+                Object.create(Object.prototype).hasOwnProperty("");
+                function B() {
+                    this.name = "babe";
+                }
+                B.prototype = Object.create(null);
+                B.prototype.constructor = B;
+                B.prototype.__proto__ = Object.create(Object.prototype);
+                B.prototype.hasOwnProperty = Object.prototype.hasOwnProperty;
+                B.prototype.isPrototypeOf = Object.prototype.isPrototypeOf;
+                var b = new B();
+                var expected;
+                // test start - 1
+                {
+                    try {
+                        var list = [
+                            [[null], {value: "null"}], // 1
+                            [[Object.prototype.__proto__], {value: "null"}], // 2
+                            [[NaN], {value: "NaN"}], // 3
+                            [[33], {value: "number"}], // 4
+                            [[undefined], {value: "undefined"}], // 5
+                            [["This is a string"], {value: "string"}], // 6
+                            [[function () {alert("HaHa");}], {value: "function"}], // 7
+                            [[{}], {value: "object"}], // 8
+                            [[{q: 123}], {value: "object"}], // 9
+                            [[Object.prototype], {value: "object"}], // 10
+                            [[Object.create(Object.prototype)], {value: "object"}], // 11
+                            [[jim], {value: "nullobj"}], // 12
+                            [[sam], {value: "nullobj"}], // 13
+                            [[jane], {value: "nullobj"}], // 14
+                            [[Object.create(null)], {value: "nullobj"}], // 15
+                            [[a], {value: "nullobj"}], // 16
+                            [[b], {value: "nullobj"}]  // 17
+                        ];
+                        let ut = new TestCase(0, true);
+                        ut.tester(this, "type", list);
+//                        expected = {value: "null"};
+//                        ut.tester(this, "type", [null], expected); //   1
+//                        ut.tester(this, "type", [Object.prototype.__proto__], expected);  //  2
+//                        expected = {value: "NaN"};
+//                        ut.tester(this, "type", [NaN], expected); // 3
+//                        expected = "number";
+//                        ut.tester(this, "type", [33], expected);  // 4
+//                        expected = "undefined";
+//                        ut.tester(this, "type", [undefined], expected);  //  5
+//                        expected = "string";
+//                        ut.tester(this, "type", ['This is a string'], expected);  //  6
+//                        expected = "function";
+//                        ut.tester(this, "type", [function () {
+//                                alert('HaHa');
+//                            }], expected);   //  7
+//                        expected = "object";
+//                        ut.tester(this, "type", [{}], expected);  //  8
+//                        ut.tester(this, "type", [{q: 123}], expected);  // 9
+//                        ut.tester(this, "type", [Object.prototype], expected);  // 10
+//                        ut.tester(this, "type", [Object.create(Object.prototype)], expected);  // 11
+//                        expected = "nullobj";
+//                        ut.tester(this, "type", [jim], expected);  // 12
+//                        ut.tester(this, "type", [sam], expected);  // 13
+//                        ut.tester(this, "type", [jane], expected);  //  14
+//                        ut.tester(this, "type", [Object.create(null)], expected);  // 15
+//
+//                        ut.tester(this, "type", [a], expected);  //  16
+//                        ut.tester(this, "type", [b], expected);   //  17
+
+                        grab("demo").innerHTML = ut.conclude();
+                        //isNaN(Object.create(null));
+                        //Object.create(null).hasOwnProperty("");
+
+//                        alert((JSON.parse('[null]')) instanceof Array);
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+                // test end - 1
+            } catch (err) {
+                alert(err.message);
+            }
+
+            $(document).ready(function () {
+                try {
+                    txt = "Hello, World!";
+                    $("#show").on("click", function () {
+                        $("#demo").html(txt);
+                    });
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+        </script>
+
+    </body>
+</html>

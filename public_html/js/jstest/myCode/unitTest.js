@@ -1,3 +1,4 @@
+// return specific data types
 function type(o) {
     var to = typeof o;
     if (o === null)
@@ -14,9 +15,27 @@ function type(o) {
     }
     return to;
 }
-//
+//compare data types
 function compareType(o1, o2) {
     return type(o1) === type(o2);
+}
+//check if not equal
+function notEqual(o1, o2) {
+    return o1 !== o2;
+}
+// assert two items are equal
+function assertEqual(o1, o2, cpf) {
+    var compare = cpf ? cpf : function (o1, o2) {
+        return o1 === o2;
+    };
+    return compare(o1, o2);
+}
+// assert two items are not equal
+function assertNotEqual(o1, o2, cpf) {
+    var compare = cpf ? cpf : function (o1, o2) {
+        return o1 !== o2;
+    };
+    return compare(o1, o2);
 }
 //
 function Log(index) {
@@ -39,8 +58,8 @@ function Log(index) {
         }
     };
     this.current = function () {
-        return this.index + ". [" + this.result + "]: "+ 
-                "(...)" + " ==> (" + this.output + 
+        return this.index + ". [" + this.result + "]: " +
+                "(...)" + " ==> (" + this.output +
                 ") - (" + this.expect + ") expected";
     };
     this.stat = function (html) {
@@ -85,15 +104,15 @@ function Log(index) {
 function test$(obj, func, input, expected, log, cpf) {
     var output, expect, result, compare;
     var checkParameter = function (obj, func, input, expected, log, cpf) {
-        var e = new Error("Default");       
+        var e = new Error("Default");
         e.name = "ParameterError";
         if (!(typeof obj === "object" || typeof obj === "function"))
             e.message = "'obj' should be an object or function";
         if (obj === null)
             e.message = "'obj' is null";
-        if (typeof func !== 'string') 
+        if (typeof func !== 'string')
             e.message = "'func' - string expected";
-        if (obj[func] && typeof obj[func] !== 'function')
+        if (input !== undefined && obj[func] && typeof obj[func] !== 'function')
             e.message = "'obj[func]' - undefined or illegal type";
         if (!obj[func] && input)
             e.message = "method - not exist";
@@ -107,7 +126,7 @@ function test$(obj, func, input, expected, log, cpf) {
         if (e.message !== "Default")
             throw e;
     };
-    
+
     if (!(log instanceof Log) ||
             !((typeof log.index === 'number') && !isNaN(log.index)))
         log = new Log(0);
@@ -157,6 +176,7 @@ function test$(obj, func, input, expected, log, cpf) {
     log.writeLog();
     return log;
 }
+//
 function test1(obj, func, input, expected, log, cpf) {
     let lg = test$(obj, func, input, expected, log, cpf);
     console.log(lg.current());
@@ -191,7 +211,7 @@ function tester(obj, func, list, log, cpf) {
     }
     return log;
 }
-//
+//accept mutiple inputs, mutiple functions  and one expected result
 function testerX(obj, funcs, list, log, cpf) {
     try {
         if (!(log instanceof Log) ||
@@ -213,8 +233,8 @@ function testerX(obj, funcs, list, log, cpf) {
                     throw e;
                 }
         }
-        for (let j in funcs) {
-            for (let i in list) {
+        for (let i in list) {
+            for (let j in funcs) {
                 log = test$(obj, funcs[j], list[i][0], list[i][1], log, cpf);
                 console.log(log.current());
             }
@@ -231,6 +251,13 @@ function TestCase(num, html) {
     this.log = new Log(num);
     this.html = html;
 }
+TestCase.prototype.setIndex = function (index) {
+    this.log.index = (typeof num === 'number' && !isNaN(index)) ? index : 0;
+};
+TestCase.prototype.writeLog = function (txt) {
+    if (typeof txt)
+        this.log.writeLog(txt);
+};
 TestCase.prototype.setStep = function (step) {
     if (typeof step === "number" && !isNaN(step)) {
         this.log.step = Math.round(step);
@@ -252,4 +279,46 @@ TestCase.prototype.testerX = function (obj, funcs, list, cpf) {
 };
 TestCase.prototype.conclude = function () {
     return this.log.stat(this.html);
+};
+//
+TestCase.prototype.assertEqual = function (o1, o2, cpf) {
+    var result = assertEqual(o1, o2, cpf);
+    this.log.addIndex();
+    if (result) {
+        this.log.passed++;
+        this.log.result = 'PASS';
+        this.log.output = '`Equal`';
+        this.log.expect = '`Equal`';
+        console.log(this.log.current());
+        this.log.writeLog();
+    } else {
+        this.log.failed++;
+        this.log.result = 'Failed';
+        this.log.output = '`Not Equal`';
+        this.log.expect = '`Equal`';
+        console.log(this.log.current());
+        this.log.writeLog();
+    }
+    return result;
+};
+//
+TestCase.prototype.assertNotEqual = function (o1, o2, cpf) {
+    var result = assertNotEqual(o1, o2, cpf);
+    this.log.addIndex();
+    if (result) {
+        this.log.passed++;
+        this.log.result = 'PASS';
+        this.log.output = '`Not Equal`';
+        this.log.expect = '`Not Equal`';
+        console.log(this.log.current());
+        this.log.writeLog();
+    } else {
+        this.log.failed++;
+        this.log.result = 'Failed';
+        this.log.output = '`Equal`';
+        this.log.expect = '`Not Equal`';
+        console.log(this.log.current());
+        this.log.writeLog();
+    }
+    return result;
 };

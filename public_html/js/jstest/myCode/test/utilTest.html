@@ -55,6 +55,9 @@
                 B.prototype.hasOwnProperty = Object.prototype.hasOwnProperty;
                 B.prototype.isPrototypeOf = Object.prototype.isPrototypeOf;
                 var b = new B();
+                var c = {__proto__:1};
+                var d = {__proto__:1, hasOwnProperty:2, isPrototypeOf: 3, constructor: 4};
+                
                 var expected;
                 // test start - 1
                 {
@@ -76,7 +79,9 @@
                             [[jane], {value: "nullobj"}], // 14
                             [[Object.create(null)], {value: "nullobj"}], // 15
                             [[a], {value: "nullobj"}], // 16
-                            [[b], {value: "nullobj"}]  // 17
+                            [[b], {value: "nullobj"}],  // 17
+                            [[c], {value: "object"}], // 18
+                            [[d], {value: "object"}]  // 19
                         ];
                         let ut = new TestCase(0, true);
                         ut.tester(this, "type", list);

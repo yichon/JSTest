@@ -67,9 +67,9 @@ function outputObj(o, decodeUrl) {
 function compareObj(o1, o2, mode) {
     var trace1 = [], trace2 = [];
     var sub = function (o1, o2, mode) {
-        var o1_t, index1, index2, attr,
-                traverse1, traverse2, len1, len2,
-                knames1, knames2, pnames1;
+        var o1_t, ifpush, attr, proto1, proto2,
+                trace_push, trace_pop, traverse1, traverse2,
+                len1, len2, knames1, knames2, pnames1;
         // Compare primitives 
         // Check if both arguments link to the same object or function.
         // Especially useful on the step where we compare prototypes
@@ -89,14 +89,6 @@ function compareObj(o1, o2, mode) {
         if (typeof o1 !== 'object' && o1_t !== 'function')
             return false;
 
-        index1 = trace1.indexOf(o1), index2 = trace2.indexOf(o2);
-        if (index1 === index2 && index1 > -1)
-            return true;
-        else if (index1 > -1 || index2 > -1)
-            return false;
-        // ...
-//        if (o1 === Object.prototype || o2 === Object.prototype)
-//            return false;
         // Comparing dates is a common scenario. Another built-ins?
         if ((o1 instanceof Date && o2 instanceof Date) ||
                 (o1 instanceof RegExp && o2 instanceof RegExp) ||
@@ -110,101 +102,113 @@ function compareObj(o1, o2, mode) {
             if (o1.toString() !== o2.toString())
                 return false;
         }
-
-        // To compare o1.constructor.prototype & o2.constructor.prototype, just set the third parameter 'true'
-//        if (o1.constructor !== o2.constructor) {
-//            if (o1.constructor !== null && o2.constructor !== null &&
-//                    o1.constructor !== undefined && o2.constructor !== undefined) {
-//                if (o1.constructor.toString() !== o2.constructor.toString()) {
-//                    return false;
-//                }
-//            } else
-//                return false;
-//        }
-
-        traverse1 = function () {
-            for (attr in o1) {
-                // Object.create(null) has no such method as 'hasOwnProperty'
-                if (!(attr in o2))
-                    return false;
-                else if (Object.prototype.hasOwnProperty.call(o1, attr) !==
-                        Object.prototype.hasOwnProperty.call(o2, attr))
-                    return false;
-                trace1.push(o1[attr]);
-                trace2.push(o2[attr]);
-                if (!sub(o1[attr], o2[attr], mode))
-                    return false;
-                trace1.pop();
-                trace2.pop();
+        //
+        trace_push = function (o1, o2) {
+            var index1 = trace1.indexOf(o1), index2 = trace2.indexOf(o2);
+            if (index1 !== index2)
+                return false;
+            if (index1 > -1) {
+                console.log("index1 === index2 ===", index1);
+                return true;
             }
-            return true;
+            trace1.push(o1);
+            trace2.push(o2);
+            console.log("+trace1:", trace1.length, "index1:", index1);
+            console.log("+trace2:", trace2.length, "index2:", index2);
         };
+        // 
+        trace_pop = function () {
+            trace1.pop();
+            trace2.pop();
+            console.log("-trace1:", trace1.length);
+            console.log("-trace2:", trace2.length);
+        };
+        // enumerable properties
         traverse2 = function () {
+            var ifpush;
+            var hasOwn = Object.prototype.hasOwnProperty;
             for (attr in o1) {
                 // Object.create(null) has no such method as 'hasOwnProperty'
-                if (Object.prototype.hasOwnProperty.call(o1, attr)) {
-                    if (!Object.prototype.hasOwnProperty.call(o2, attr))
+                if (hasOwn.call(o1, attr)) {
+                    if (!hasOwn.call(o2, attr))
                         return false;
                     else {
-                        trace1.push(o1[attr]);
-                        trace2.push(o2[attr]);
+                        ifpush = trace_push(o1[attr], o2[attr]);
+                        if (ifpush !== undefined)
+                            return ifpush;
                         if (!sub(o1[attr], o2[attr], mode))
                             return false;
-                        trace1.pop();
-                        trace2.pop();
+                        trace_pop();
                     }
                 }
             }
             return true;
         };
-
         // simple default mode, only compare the enumerable properties owned by the objects
         knames1 = Object.keys(o1);
         knames2 = Object.keys(o2);
-        if (mode === undefined || !mode) {
-            if (knames1.length !== knames2.length)
-                return false;
-            if(!traverse1())
-                return false;
-            return true;
-            // If set 'mode' argument 'true', compare all the properties,
-            // including enumerable/inenumerable properties,and the properties inherited from parent objects.
-            // Tt is a resource-consuming task.
-        } else {
-            len1 = 0, len2 = 0;
-            for (attr in o1)
-                len1++;
-            for (attr in o2)
-                len2++;
-            if (len1 !== len2)
-                return false;
-            if (knames1.length !== knames2.length)
-                return false;
-            pnames1 = Object.getOwnPropertyNames(o1);
-            if (pnames1.length !== Object.getOwnPropertyNames(o2).length)
-                return false;
+        if (knames1.length !== knames2.length)
+            return false;
 
-            if(!traverse2())
-                return false;
+        len1 = 0, len2 = 0;
+        for (attr in o1)
+            len1++;
+        for (attr in o2)
+            len2++;
+        if (len1 !== len2)
+            return false;
 
-            if (pnames1.length !== knames1.length) {
-                var k = true;
-                for (var i = 0; i < pnames1.length; i++) {
-                    for (var j = 0; j < knames1.length; j++) {
-                        if (pnames1[i] === knames1[j]) {
-                            k = false;
-                            break;
-                        }
+        pnames1 = Object.getOwnPropertyNames(o1);
+        if (pnames1.length !== Object.getOwnPropertyNames(o2).length)
+            return false;
+
+        if (!traverse2())
+            return false;
+
+        if (pnames1.length !== knames1.length) {
+            var ok = true;
+            for (var i = 0; i < pnames1.length; i++) {
+                for (var j = 0; j < knames1.length; j++) {
+                    if (pnames1[i] === knames1[j]) {
+                        ok = false;
+                        break;
                     }
-                    //console.log("Hello: ", pnames[i]);
-                    if (pnames1[i] !== "constructor" && k &&
-                            !arguments.callee(o1[pnames1[i]], o2[pnames1[i]], mode))
-                        return false;
-                    k = true;
                 }
+                if (ok) {
+                    ifpush = trace_push(o1[pnames1[i]], o2[pnames1[i]]);
+                    if (ifpush !== undefined)
+                        return ifpush;
+                    if (!sub(o1[pnames1[i]], o2[pnames1[i]], mode))
+                        return false;
+                    trace_pop();
+                }
+                ok = true;
             }
-            return true;
         }
+
+        if (typeof Object.getPrototypeOf === 'function' || 
+                (typeof o1.__proto__ === 'object' && typeof o2.__proto__ === 'object') ||
+                (typeof o1.constructor === 'function' && typeof o1.constructor === 'function')) {
+            if (typeof Object.getPrototypeOf === 'function') {
+                proto1 = Object.getPrototypeOf(o1);
+                proto2 = Object.getPrototypeOf(o2);
+            } else if((typeof o1.__proto__ === 'object' && typeof o2.__proto__ === 'object')){
+                proto1 = o1.__proto__;
+                proto2 = o2.__proto__;
+            }else{
+                proto1 = o1.constructor.prototype;
+                proto2 = o2.constructor.prototype;
+            }
+            ifpush = trace_push(proto1, proto2);
+            if (ifpush !== undefined)
+                return ifpush;
+            console.log(proto1, proto2);
+            if (!sub(proto1, proto2, mode))
+                return false;
+            trace_pop();
+        }
+
+        return true;
     };
     return sub(o1, o2, mode);
 }

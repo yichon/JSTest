@@ -23,23 +23,9 @@ function compareType(o1, o2) {
 function notEqual(o1, o2) {
     return o1 !== o2;
 }
-// assert two items are equal
-function assertEqual(o1, o2, cpf) {
-    var compare = cpf ? cpf : function (o1, o2) {
-        return o1 === o2;
-    };
-    return compare(o1, o2);
-}
-// assert two items are not equal
-function assertNotEqual(o1, o2, cpf) {
-    var compare = cpf ? cpf : function (o1, o2) {
-        return o1 !== o2;
-    };
-    return compare(o1, o2);
-}
 //
 function Log(index) {
-    this.index = (typeof num === 'number' && !isNaN(index)) ? index : 0;
+    this.index = (typeof index === 'number' && !isNaN(index)) ? index : 0;
     this.step = 1;
     this.counter = 0;
     this.func = "";
@@ -63,9 +49,9 @@ function Log(index) {
                 ") - (" + this.expect + ") expected";
     };
     this.stat = function (html) {
-        let total = this.failed + this.passed;
-        let rate = total > 0 ? Math.round((this.passed / total) * 100) : 0;
-        let str = "Total: " + total + ", Passed: " +
+        var total = this.failed + this.passed;
+        var rate = total > 0 ? Math.round((this.passed / total) * 100) : 0;
+        var str = "Total: " + total + ", Passed: " +
                 this.passed + ", Failed: " + this.failed +
                 ", Stat: " + rate + "% Passed";
         console.log("----------\n" + str);
@@ -100,10 +86,32 @@ function Log(index) {
         this.text += txt;
     };
 }
+//
+function TestCase(num, html) {
+    this.log = new Log(num);
+    this.html = html;
+}
+TestCase.prototype.setIndex = function (index) {
+    this.log.index = (typeof index === 'number' && !isNaN(index)) ? index : 0;
+};
+TestCase.prototype.writeLog = function (txt) {
+    if (typeof txt)
+        this.log.writeLog(txt);
+};
+TestCase.prototype.setStep = function (step) {
+    if (typeof step === "number" && !isNaN(step)) {
+        this.log.step = Math.round(step);
+        this.log.counter = this.log.step - 1;
+        this.log.writeLog("Step is set to " + this.log.step);
+    }
+};
+TestCase.prototype.conclude = function () {
+    return this.log.stat(this.html);
+};
 // only accept one input and one expected result
-function test$(obj, func, input, expected, log, cpf) {
+TestCase.prototype.test$ = function (obj, func, input, expected, cpf) {
     var output, expect, result, compare;
-    var checkParameter = function (obj, func, input, expected, log, cpf) {
+    var checkParameter = function (obj, func, input, expected, cpf) {
         var e = new Error("Default");
         e.name = "ParameterError";
         if (!(typeof obj === "object" || typeof obj === "function"))
@@ -127,17 +135,17 @@ function test$(obj, func, input, expected, log, cpf) {
             throw e;
     };
 
-    if (!(log instanceof Log) ||
-            !((typeof log.index === 'number') && !isNaN(log.index)))
-        log = new Log(0);
+    if (!(this.log instanceof Log) ||
+            !((typeof this.log.index === 'number') && !isNaN(this.log.index)))
+        this.log = new Log(0);
     compare = cpf ? cpf : function (a, b) { // compare primitive values? or Objects?
         return a === b;
     };
     try {
-        log.addIndex();
-        checkParameter(obj, func, input, expected, log, cpf);
-        log.func = func;
-        log.input = input;
+        this.log.addIndex();
+        checkParameter(obj, func, input, expected, cpf);
+        this.log.func = func;
+        this.log.input = input;
         if (input === undefined) // property
             output = obj[func];
         else // method
@@ -166,28 +174,28 @@ function test$(obj, func, input, expected, log, cpf) {
             result = 'Failed';
         }
     }
-    log.result = result;
-    log.output = output;
-    log.expect = expect;
+    this.log.result = result;
+    this.log.output = output;
+    this.log.expect = expect;
     if (result === 'PASS')
-        log.passed++;
+        this.log.passed++;
     else
-        log.failed++;
-    log.writeLog();
-    return log;
-}
+        this.log.failed++;
+    this.log.writeLog();
+    return this.log;
+};
 //
-function test1(obj, func, input, expected, log, cpf) {
-    let lg = test$(obj, func, input, expected, log, cpf);
-    console.log(lg.current());
-    return lg;
-}
+TestCase.prototype.test1 = function (obj, func, input, expected, cpf) {
+    this.test$(obj, func, input, expected, cpf);
+    console.log(this.log.current());
+    return this.log;
+};
 //accept mutiple inputs and one expected result
-function tester(obj, func, list, log, cpf) {
+TestCase.prototype.tester = function (obj, func, list, cpf) {
     try {
-        if (!(log instanceof Log) ||
-                !((typeof log.index === 'number') && !isNaN(log.index)))
-            log = new Log(0);
+        if (!(this.log instanceof Log) ||
+                !((typeof this.log.index === 'number') && !isNaN(this.log.index)))
+            this.log = new Log(0);
 
         if (!(list instanceof Array) || !(list[0] instanceof Array)) {
             var e = new Error("'input list' - illegal type");
@@ -201,22 +209,22 @@ function tester(obj, func, list, log, cpf) {
                 }
         }
         for (let i in list) {
-            log = test$(obj, func, list[i][0], list[i][1], log, cpf);
-            console.log(log.current());
+            this.test$(obj, func, list[i][0], list[i][1], cpf);
+            console.log(this.log.current());
         }
     } catch (err) {
-        console.log(log.index + ". [" + err.name + "]: " + err.message);
-        log.writeLog(log.index + ". [<span style = 'color:red'>" +
+        console.log(this.log.index + ". [" + err.name + "]: " + err.message);
+        this.log.writeLog(this.log.index + ". [<span style = 'color:red'>" +
                 err.name + "</span>]: " + err.message);
     }
-    return log;
-}
+    return this.log;
+};
 //accept mutiple inputs, mutiple functions  and one expected result
-function testerX(obj, funcs, list, log, cpf) {
+TestCase.prototype.testerX = function (obj, funcs, list, cpf) {
     try {
-        if (!(log instanceof Log) ||
-                !((typeof log.index === 'number') && !isNaN(log.index)))
-            log = new Log(0);
+        if (!(this.log instanceof Log) ||
+                !((typeof this.log.index === 'number') && !isNaN(this.log.index)))
+            this.log = new Log(0);
         var e = new Error("");
         e.name = "ParameterError";
         if (!(funcs instanceof Array) || typeof funcs[0] !== "string") {
@@ -235,54 +243,20 @@ function testerX(obj, funcs, list, log, cpf) {
         }
         for (let i in list) {
             for (let j in funcs) {
-                log = test$(obj, funcs[j], list[i][0], list[i][1], log, cpf);
-                console.log(log.current());
+                this.test$(obj, funcs[j], list[i][0], list[i][1], cpf);
+                console.log(this.log.current());
             }
         }
     } catch (err) {
-        console.log(log.index + ". [" + err.name + "]: " + err.message);
-        log.writeLog(log.index + ". [<span style = 'color:red'>" +
+        console.log(this.log.index + ". [" + err.name + "]: " + err.message);
+        this.log.writeLog(this.log.index + ". [<span style = 'color:red'>" +
                 err.name + "</span>]: " + err.message);
     }
-    return log;
-}
-//
-function TestCase(num, html) {
-    this.log = new Log(num);
-    this.html = html;
-}
-TestCase.prototype.setIndex = function (index) {
-    this.log.index = (typeof num === 'number' && !isNaN(index)) ? index : 0;
+    return this.log;
 };
-TestCase.prototype.writeLog = function (txt) {
-    if (typeof txt)
-        this.log.writeLog(txt);
-};
-TestCase.prototype.setStep = function (step) {
-    if (typeof step === "number" && !isNaN(step)) {
-        this.log.step = Math.round(step);
-        this.log.counter = this.log.step - 1;
-        this.log.writeLog("Step is set to " + this.log.step);
-    }
-};
-TestCase.prototype.test$ = function (obj, func, input, expected, cpf) {
-    test$(obj, func, input, expected, this.log, cpf);
-};
-TestCase.prototype.test1 = function (obj, func, input, expected, cpf) {
-    test1(obj, func, input, expected, this.log, cpf);
-};
-TestCase.prototype.tester = function (obj, func, list, cpf) {
-    tester(obj, func, list, this.log, cpf);
-};
-TestCase.prototype.testerX = function (obj, funcs, list, cpf) {
-    testerX(obj, funcs, list, this.log, cpf);
-};
-TestCase.prototype.conclude = function () {
-    return this.log.stat(this.html);
-};
-//
+// assert two items are equal
 TestCase.prototype.assertEqual = function (o1, o2, cpf) {
-    var result = assertEqual(o1, o2, cpf);
+    var result = (typeof cpf === 'function') ? cpf(o1, o2) : (o1 === o2);
     this.log.addIndex();
     if (result) {
         this.log.passed++;
@@ -301,9 +275,9 @@ TestCase.prototype.assertEqual = function (o1, o2, cpf) {
     }
     return result;
 };
-//
+// assert two items are not equal
 TestCase.prototype.assertNotEqual = function (o1, o2, cpf) {
-    var result = assertNotEqual(o1, o2, cpf);
+    var result = (typeof cpf === 'function') ? cpf(o1, o2) : (o1 !== o2);
     this.log.addIndex();
     if (result) {
         this.log.passed++;

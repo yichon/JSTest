@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Object</title>
+        <meta charset="UTF-8">
+        <script src="../../jquery-3.1.1.js"></script>
+        <script src="obj.js"></script>
+        <script src="testData.js"></script>
+        <script>
+            var config0 = {
+                url: "http://106.185.49.159/@tes%60/site/js/jstest/motel/checkin.php",
+                form: {
+                    account_in: "motel202",
+                    password_in: {isRange: true, low: 180000, high: 180500, filter: {list: [180400, 180401], patterns: []}, head: "", tail: ""},
+                    login: ["SIGN IN", "SIGN IN2", "SIGN IN3"]
+                },
+                method: "post",
+                x:/[a-z]/g
+            };
+            var config1 = {
+                url: "http://106.185.49.159/@tes%60/site/js/jstest/motel/checkin.php",
+                form: {
+                    account_in: "motel202",
+                    password_in: {isRange: true, low: 180000, high: 180500, filter: {list: [180400, 180401], patterns: []}, head: "", tail: ""},
+                    login: ["SIGN IN", "SIGN IN2", "SIGN IN3"]
+                },
+                method: "post",
+                x:/[a-z]/g
+            };
+            $(document).ready(function () {
+                try {
+                    txt = "Hello, World!";
+                    if(compareObj(config0, config1))
+                        $("#demo").html("content is equal");
+                    else $("#demo").html("content is not equal");
+                    if(config0 === config1)
+                        $("#demo").html("!!!!!!");
+                   //alert(JSON.stringify(new Date()));
+                   //alert((new Date()));
+                   //alert( (new Boolean(true)) === (new Boolean(true)) );
+                   //alert(JSON.stringify(new Boolean(true)) === JSON.stringify(new Boolean(true)));
+                   var a1 = new Function('a', 'b', 'return a + b');
+                   var a2 = new Function('a', 'b', 'return a + b');
+                   var b1 = function(a, b){return a + b;};
+                   var b2 = function(a, b){return a + b;};
+                   var c1 = function(){ };
+                   var c2 = function(){};
+                   //alert(c1.toString() === c2.toString());
+                   //alert(c1.toString()+"<br>"+c2.toString());
+                   //alert(JSON.stringify(c1) === JSON.stringify(c2));
+                   //alert(JSON.stringify(a1)+"<br>"+JSON.stringify(a2));
+                   //alert(JSON.stringify(/[a-z]/g));
+                   var s = new String("w");
+                   var e = / /;
+                   var p = 1;
+                   var o = {};
+                   o.prototype = s;
+                   // alert(e instanceof RegExp);
+                   // alert(compareContent(s, o));
+                   // alert(new Number(1) instanceof Number);
+                   //alert(Object.prototype.constructor);
+                   
+                    $("#show").on("click", function () {
+                        // $("#demo").html(txt);
+                    });
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+        </script>
+
+    </head>
+    <body>
+        <h1>This is a JS Test</h1>
+
+        <button name="b1" id="show">Click me!</button>
+        <p></p>
+        <div id="demo"></div>
+    </body>
+</html>

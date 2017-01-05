@@ -327,7 +327,7 @@
                             let y = {a: {b: {c: 1}, d: 3}};
                             let z = {a: {b: {c: 1}, d: 2}};
                             expected = {value: false}; //  
-                            ut.test1(this, "compareObj", [y, z], expected); //  1
+                            ut.test1(this, "joCompare", [y, z], expected); //  1
                             ut.test1(this, "deepCompare", [y, z], expected); // 2
                             
                             y = {a: {b: {c: 1}, d: 2}};
@@ -335,7 +335,7 @@
                             z = {a: {b: {c: 1}, d: 2}};
                             z.a.b.c = z;
                             expected = {value: true}; //  
-                            ut.test1(this, "compareObj", [y, z], expected); //  3
+                            ut.test1(this, "joCompare", [y, z], expected); //  3
                             expected = {value: false}; // Failed ?
                             ut.test1(this, "deepCompare", [y, z], expected); // 4
                             
@@ -344,31 +344,31 @@
                             z = {a: {b: {c: 1}, d: 2}};
                             z.a.b.c = z.a;
                             expected = {value: false}; //  
-                            ut.test1(this, "compareObj", [y, z], expected); //  5
+                            ut.test1(this, "joCompare", [y, z], expected); //  5
                             ut.test1(this, "deepCompare", [y, z], expected); // 6
                             
                             y = {a: {b: {c: 1}, d: 2}};
                             z = {a: {b: {c: 1}, d: 2}};
                             expected = {value: true}; //  
-                            ut.test1(this, "compareObj", [y, z], expected); //  7
+                            ut.test1(this, "joCompare", [y, z], expected); //  7
                             ut.test1(this, "deepCompare", [y, z], expected); // 8
                             
-                            ut.test1(this, "compareObj", [data1, data2], expected); //  9
+                            ut.test1(this, "joCompare", [data1, data2], expected); //  9
                             ut.test1(this, "deepCompare", [data1, data2], expected); // 10
                             
                             expected = {value: false};
-                            ut.test1(this, "compareObj", [data3, data4], expected); //  11
+                            ut.test1(this, "joCompare", [data3, data4], expected); //  11
                             ut.test1(this, "deepCompare", [data3, data4], expected); // 12
                             
-                            ut.test1(this, "compareObj", [data5, data6], expected); //  13
+                            ut.test1(this, "joCompare", [data5, data6], expected); //  13
                             ut.test1(this, "deepCompare", [data5, data6], expected); // 14
                             
                             expected = {value: true};
-                            ut.test1(this, "compareObj", [data7, data8], expected); //  13
+                            ut.test1(this, "joCompare", [data7, data8], expected); //  13
                             ut.test1(this, "deepCompare", [data7, data8], expected); // 14
                             
                             expected = {value: true};
-                            ut.test1(this, "compareObj", [{}, Object.create(Object.prototype)], expected); //  15
+                            ut.test1(this, "joCompare", [{}, Object.create(Object.prototype)], expected); //  15
                             ut.test1(this, "deepCompare", [{}, Object.create(Object.prototype)], expected); // 16
                            
                             console.log("test end - (6)");

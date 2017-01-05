@@ -95,3 +95,18 @@ traverse2 = function (o1, o2, mode) {
 //                ok = true;
 //            }
 //        }
+
+//
+//        // Comparing dates is a common scenario. 
+//        if ((o1 instanceof Date && o2 instanceof Date) ||
+//                (o1 instanceof RegExp && o2 instanceof RegExp) ||
+//                (o1 instanceof String && o2 instanceof String) ||
+//                (o1 instanceof Number && o2 instanceof Number) ||
+//                (o1 instanceof Boolean && o2 instanceof Boolean))
+//            return o1.toString() === o2.toString();
+//
+//        // ...
+//        if (o1_t === 'function') {
+//            if (o1.toString() !== o2.toString())
+//                return false;
+//        }

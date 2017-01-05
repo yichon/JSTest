@@ -1,31 +1,12 @@
-function type(o) {
-    var to = typeof o;
-    if (o === null)
-        return "null";
-    if (o instanceof Array)
-        return "array";
-    if (to === "number" && isNaN(o))
-        return "NaN";
-    try {
-        if (to === "object")
-            isNaN(o); //Object.create(null) & its descendants will throw an error         
-    } catch (err) {
-        return "nullobj";
-    }
-    return to;
-}
-//
-function compareType(o1, o2) {
-    return type(o1) === type(o2);
-}
+//jo stands for Javascript Object
+var jo = {};
 // Finished
 function isEmptyObj(e) {
     var t;
     for (t in e)
         return false;
     return true;
-}
-
+};
 // Finished
 function outputObj(o, decodeUrl) {
     if (typeof o !== "object")
@@ -60,18 +41,33 @@ function outputObj(o, decodeUrl) {
         return txt;
     };
     return sub(o);
-}
+};
 
 // Building
 // Object.is() ?
-function compareObj(o1, o2) {
+function joCompare(o1, o2) {
     var trace1 = [], trace2 = [];
+    var type = function (o) {
+        var to = typeof o;
+        if (o === null)
+            return "null";
+        if (o instanceof Array)
+            return "array";
+        if (to === "number" && isNaN(o))
+            return "NaN";
+        try { //Object.create(null) & its descendants will throw an error 
+            if (to === "object")
+                isNaN(o);         
+        } catch (err) {
+            return "nullobj";
+        }
+        return to;
+    };
     var sub = function (o1, o2) {
         var o1_t, if_return, proto1, proto2, i, isEnumerable,
                 trace_push, trace_pop, kn1, kn2, pn1, pn2;
         // Compare primitives 
         // Check if both arguments link to the same object or function.
-        // Especially useful on the step where we compare prototypes
         if (o1 === o2)
             return true;
 
@@ -88,19 +84,13 @@ function compareObj(o1, o2) {
         if (typeof o1 !== 'object' && o1_t !== 'function')
             return false;
 
-        // Comparing dates is a common scenario. Another built-ins?
-        if ((o1 instanceof Date && o2 instanceof Date) ||
-                (o1 instanceof RegExp && o2 instanceof RegExp) ||
-                (o1 instanceof String && o2 instanceof String) ||
-                (o1 instanceof Number && o2 instanceof Number) ||
-                (o1 instanceof Boolean && o2 instanceof Boolean))
-            return o1.toString() === o2.toString();
+        //Especially useful when compare -
+        //Date/RegExp/String/Number/Boolean/Function/Array Object
+        //Note that 'nullobj' type may not have native 'toString' method,
+        //so, we exclude it at first.
+        if (o1_t !== 'nullobj' && o1.toString() !== o2.toString())
+            return false;
 
-        // ...
-        if (o1_t === 'function') {
-            if (o1.toString() !== o2.toString())
-                return false;
-        }
         // keep track of the items visited
         trace_push = function (o1, o2) {
             var index1 = trace1.indexOf(o1), index2 = trace2.indexOf(o2);
@@ -194,11 +184,11 @@ function compareObj(o1, o2) {
         return true;
     };
     return sub(o1, o2);
-}
+};
 
 // Building
 function compareContent(o1, o2) {
-    return compareObj(o1, o2);
+    return joCompare(o1, o2);
 }
 // Finished
 //from stackoverflow

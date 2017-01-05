@@ -16,8 +16,11 @@ function type(o) {
     return to;
 }
 //compare data types
-function compareType(o1, o2) {
+function equalType(o1, o2) {
     return type(o1) === type(o2);
+}
+function notEqualType(o1, o2) {
+    return type(o1) !== type(o2);
 }
 //check if not equal
 function notEqual(o1, o2) {

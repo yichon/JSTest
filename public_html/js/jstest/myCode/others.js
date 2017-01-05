@@ -62,3 +62,36 @@ traverse2 = function (o1, o2, mode) {
 //            // including enumerable/inenumerable properties,and the properties inherited from parent objects.
 //            // Tt is a resource-consuming task.
 //        } else {}
+
+//        len1 = 0, len2 = 0;
+//        for (attr in o1)
+//            len1++;
+//        for (attr in o2)
+//            len2++;
+//        if (len1 !== len2)
+//            return false;
+
+
+//        if (pn1.length !== kn1.length) {
+//            ok = true;
+//            for (i = 0; i < pn1.length; i++) {
+//                for (j = 0; j < kn1.length; j++) {
+//                    if (pn1[i] === kn1[j]) {
+//                        ok = false;
+//                        break;
+//                    }
+//                }
+//                if (ok) {
+////                    console.log("non-enumerable: ", pn1[i]); //
+//                    if (pn2.indexOf(pn1[i]) === -1)
+//                        return false;
+//                    ifpush = trace_push(o1[pn1[i]], o2[pn1[i]]);
+//                    if (ifpush !== undefined)
+//                        return ifpush;
+//                    if (!sub(o1[pn1[i]], o2[pn1[i]]))
+//                        return false;
+//                    trace_pop();
+//                }
+//                ok = true;
+//            }
+//        }

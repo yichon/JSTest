@@ -110,3 +110,20 @@ traverse2 = function (o1, o2, mode) {
 //            if (o1.toString() !== o2.toString())
 //                return false;
 //        }
+
+
+//var para = 'dashing through the snow' +
+//        ' in a one horse open sleigh' +
+//        ' over the fields we go' +
+//        ' laughing all the way';
+//var words, newPara = '';
+//console.log(para);
+//
+//words = para.split(' ');
+//
+//words.sort(function (a, b) {
+//    return 0.5 - Math.random();
+//});
+//
+//newPara = words.join(' ');
+//console.log(newPara);

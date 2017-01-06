@@ -280,7 +280,7 @@ TestCase.prototype.assertEqual = function (o1, o2, cpf) {
 };
 // assert two items are not equal
 TestCase.prototype.assertNotEqual = function (o1, o2, cpf) {
-    var result = (typeof cpf === 'function') ? cpf(o1, o2) : (o1 !== o2);
+    var result = (typeof cpf === 'function') ? !cpf(o1, o2) : (o1 !== o2);
     this.log.addIndex();
     if (result) {
         this.log.passed++;
@@ -298,4 +298,14 @@ TestCase.prototype.assertNotEqual = function (o1, o2, cpf) {
         this.log.writeLog();
     }
     return result;
+};
+TestCase.prototype.assertTrue = function(o, strict){
+    if(!strict)
+        o = Boolean(o);
+    return this.assertEqual(o, true);
+};
+TestCase.prototype.assertFalse = function(o, strict){
+    if(!strict)
+        o = Boolean(o);
+    return this.assertEqual(o, false);
 };

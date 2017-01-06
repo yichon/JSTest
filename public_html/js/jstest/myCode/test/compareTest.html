@@ -364,12 +364,15 @@
                             ut.test1(this, "deepCompare", [data5, data6], expected); // 14
                             
                             expected = {value: true};
-                            ut.test1(this, "joCompare", [data7, data8], expected); //  13
-                            ut.test1(this, "deepCompare", [data7, data8], expected); // 14
+                            ut.test1(this, "joCompare", [data7, data8], expected); //  15
+                            ut.test1(this, "deepCompare", [data7, data8], expected); // 16
                             
                             expected = {value: true};
-                            ut.test1(this, "joCompare", [{}, Object.create(Object.prototype)], expected); //  15
-                            ut.test1(this, "deepCompare", [{}, Object.create(Object.prototype)], expected); // 16
+                            ut.test1(this, "joCompare", [{}, Object.create(Object.prototype)], expected); //  17
+                            ut.test1(this, "deepCompare", [{}, Object.create(Object.prototype)], expected); // 18
+                            
+                            ut.test1(this, "joCompare", [{}, new Object()], expected); //  19
+                            ut.test1(this, "deepCompare", [{}, new Object()], expected); // 20
                            
                             console.log("test end - (6)");
                             ut.writeLog("test end - (6)");

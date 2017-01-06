@@ -1,12 +1,31 @@
 //jo stands for Javascript Object
 var jo = {};
+function type(o) {
+    var to = typeof o;
+    if (o === null)
+        return "null";
+    if (o instanceof Array)
+        return "array";
+    if (to === "number" && isNaN(o))
+        return "NaN";
+    try { //Object.create(null) & its descendants will throw an error 
+        if (to === "object")
+            isNaN(o);
+    } catch (err) {
+        return "nullobj";
+    }
+    return to;
+}
+;
+
 // Finished
 function isEmptyObj(e) {
     var t;
     for (t in e)
         return false;
     return true;
-};
+}
+;
 // Finished
 function outputObj(o, decodeUrl) {
     if (typeof o !== "object")
@@ -41,28 +60,14 @@ function outputObj(o, decodeUrl) {
         return txt;
     };
     return sub(o);
-};
+}
+;
 
 // Building
 // Object.is() ?
 function joCompare(o1, o2) {
     var trace1 = [], trace2 = [];
-    var type = function (o) {
-        var to = typeof o;
-        if (o === null)
-            return "null";
-        if (o instanceof Array)
-            return "array";
-        if (to === "number" && isNaN(o))
-            return "NaN";
-        try { //Object.create(null) & its descendants will throw an error 
-            if (to === "object")
-                isNaN(o);         
-        } catch (err) {
-            return "nullobj";
-        }
-        return to;
-    };
+
     var sub = function (o1, o2) {
         var o1_t, if_return, proto1, proto2, i, isEnumerable,
                 trace_push, trace_pop, kn1, kn2, pn1, pn2;
@@ -184,7 +189,8 @@ function joCompare(o1, o2) {
         return true;
     };
     return sub(o1, o2);
-};
+}
+;
 
 // Building
 function compareContent(o1, o2) {
@@ -306,9 +312,56 @@ function deepCompare() {
 }
 
 // Building
-function cloneObj(obj) {
-    var copy = {};
-    //
+function joClone(obj) {
+    var trace = [];
+    trace.push(obj);
+    var subClone = function (obj) {
+        var copy, i, hasOwn, fs;
+        var isDeep = function (o) {
+            var t;
+            if (o === null)
+                return false;
+            t = typeof o;
+            if (t !== 'object' && t !== 'function')
+                return false;
+            return true;
+        };
+        var isCircular = function (o) {
+            if (trace.indexOf(o) === -1)
+                return false;
+            else
+                return true;
+        };
 
-    return copy;
+        if (!isDeep(obj))
+            return obj;
+
+        if (typeof obj === 'function') {
+            fs = obj.toString();
+            if (fs.indexOf("() {\n    [native code]\n}") > -1)
+                return obj;
+            else
+                copy = eval('(' + fs + ')');
+        } else if (typeof obj.constructor === 'function') {
+            copy = new obj.constructor();
+        } else
+            copy = {};
+
+        hasOwn = Object.prototype.hasOwnProperty;
+        for (i in obj) {
+            if (hasOwn.call(obj, i)) {
+                if (isDeep(obj[i]) && !isCircular(obj[i])) {
+                    trace.push(obj[i]);
+                    copy[i] = subClone(obj[i]);
+                    //trace.pop();
+                } else {
+                    copy[i] = obj[i];
+                }
+            }
+        }
+
+        return copy;
+    };
+
+    return subClone(obj);
 }

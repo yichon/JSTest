@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Window Test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../../jquery-3.1.1.js"></script>
+        <script src="../obj.js"></script>
+        <script src="../util.js"></script>
+        <script src="../unitTest.js"></script>
+        <script src="../testData.js"></script>
+
+    </head>
+    <body>
+        <h1>This is a window JS Test</h1>
+        <button name="b1" id="show">Refresh!</button>
+        <p></p>
+        <div id="demo"></div>
+        <script></script>
+        <script>
+            var alltests = function () {
+                try {
+                    var ut = new TestCase();
+                    var i, j, temp, d;
+                    {
+                        // Test(1) - Start
+                        ut.startMark("1", "window<br>");
+                        ut.setIndex();
+                        ut.writeLog("For IE11");
+                        ut.writeLog("Window.prototype.__proto__ === Object.prototype");
+                        if (Window.prototype.__proto__ === Object.prototype) {
+                            ut.assertTrue(Window.prototype.__proto__ === Object.prototype);
+                        }
+                        ut.writeLog("For FIrefox & Chrome");
+                        ut.writeLog("Window.prototype.__proto__.__proto__.__proto__ === Object.prototype");
+                        if (Window.prototype.__proto__ !== Object.prototype) {
+                            ut.assertTrue(Window.prototype.__proto__.__proto__.__proto__ === Object.prototype);
+                        }
+                        //ut.writeLog("---------------------------------------------------------------<br>");
+                        ut.writeLog(" ");
+                        ut.writeLog("window instanceof Window");
+                        ut.assertTrue(window instanceof Window);
+                        ut.writeLog("Window.prototype.isPrototypeOf(window)");
+                        ut.assertTrue(Window.prototype.isPrototypeOf(window));
+                        ut.writeLog(" ");
+
+                        let pn = Object.getOwnPropertyNames(window);
+                        let kn = Object.keys(window);
+                        let pn2 = Object.getOwnPropertyNames(Window.prototype);
+
+                        ut.writeLog("@Object.getOwnPropertyNames(window) & ");
+                        ut.writeLog("@!Object.prototype.propertyIsEnumerable.call(window, pn[i])");
+                        temp = [];
+                        for (i = 0; i < pn.length; i++) {
+                            if (!Object.prototype.propertyIsEnumerable.call(window, pn[i])) {
+                                temp.push(pn[i]);
+                                if ((temp.length) % 7 === 0) {
+                                    ut.writeLog(temp.join(" , "));
+                                    temp = [];
+                                }
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+                        ut.writeLog("@Object.keys(window)");
+                        temp = [];
+                        for (i = 0; i < kn.length; i++) {
+                            temp.push(kn[i]);
+                            if ((temp.length) % 7 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog(" ");
+                        ut.writeLog("@Object.keys(window)+a");
+                        ut.writeLog("@Object.getOwnPropertyDescriptor(window, prop)");
+                        ut.writeLog("@d.configurable: false");
+                        temp = [];
+                        for (i = 0; i < kn.length; i++) {
+                            if (window[kn[i]]) {
+                                d = Object.getOwnPropertyDescriptor(window, kn[i]);
+                                if (!d.configurable) {
+                                    temp.push(kn[i]);
+                                    if ((temp.length) % 7 === 0) {
+                                        ut.writeLog(temp.join(" , "));
+                                        temp = [];
+                                    }
+                                }
+                            }
+
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog(" ");
+                        ut.writeLog("@Object.keys(window)+b");
+                        ut.writeLog("@Object.getOwnPropertyDescriptor(window, prop)");
+                        ut.writeLog("@d.configurable: true");
+                        temp = [];
+                        for (i = 0; i < kn.length; i++) {
+                            if (window[kn[i]]) {
+                                d = Object.getOwnPropertyDescriptor(window, kn[i]);
+                                if (d.configurable) {
+                                    temp.push(kn[i]);
+                                    if ((temp.length) % 7 === 0) {
+                                        ut.writeLog(temp.join(" , "));
+                                        temp = [];
+                                    }
+                                }
+                            }
+
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog(" ");
+                        ut.writeLog("@Object.keys(window)+c");
+                        ut.writeLog("@Object.getOwnPropertyDescriptor(window, prop)");
+                        ut.writeLog("@d.writable: false");
+                        temp = [];
+                        for (i = 0; i < kn.length; i++) {
+                            if (window[kn[i]]) {
+                                d = Object.getOwnPropertyDescriptor(window, kn[i]);
+                                if (!d.writable) {
+                                    temp.push(kn[i]);
+                                    if ((temp.length) % 7 === 0) {
+                                        ut.writeLog(temp.join(" , "));
+                                        temp = [];
+                                    }
+                                }
+                            }
+
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog(" ");
+                        ut.writeLog("@Object.keys(window)+d");
+                        ut.writeLog("@Object.getOwnPropertyDescriptor(window, prop)");
+                        ut.writeLog("@d.writable: true");
+                        temp = [];
+                        for (i = 0; i < kn.length; i++) {
+                            if (window[kn[i]]) {
+                                d = Object.getOwnPropertyDescriptor(window, kn[i]);
+                                if (d.writable) {
+                                    temp.push(kn[i]);
+                                    if ((temp.length) % 7 === 0) {
+                                        ut.writeLog(temp.join(" , "));
+                                        temp = [];
+                                    }
+                                }
+                            }
+
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog(" ");
+                        ut.writeLog("@Object.keys(window)+e");
+                        ut.writeLog("@Object.getOwnPropertyDescriptor(window, prop)");
+                        ut.writeLog("@d.configurable: false, d.writable: true");
+                        temp = [];
+                        for (i = 0; i < kn.length; i++) {
+                            if (window[kn[i]]) {
+                                d = Object.getOwnPropertyDescriptor(window, kn[i]);
+                                if (!d.configurable && d.writable) {
+                                    temp.push(kn[i]);
+                                    if ((temp.length) % 7 === 0) {
+                                        ut.writeLog(temp.join(" , "));
+                                        temp = [];
+                                    }
+                                }
+                            }
+
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog(" ");
+                        ut.writeLog("@Object.keys(window)+f");
+                        ut.writeLog("@Object.getOwnPropertyDescriptor(window, prop)");
+                        ut.writeLog("@!(d.configurable: false, d.writable: true)");
+                        temp = [];
+                        for (i = 0; i < kn.length; i++) {
+                            if (window[kn[i]]) {
+                                d = Object.getOwnPropertyDescriptor(window, kn[i]);
+                                if (!(!d.configurable && d.writable)) {
+                                    temp.push(kn[i]);
+                                    if ((temp.length) % 7 === 0) {
+                                        ut.writeLog(temp.join(" , "));
+                                        temp = [];
+                                    }
+                                }
+                            }
+
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog(" ");
+                        ut.writeLog("@Object.keys(window)+g");
+                        ut.writeLog("@Object.getOwnPropertyDescriptor(window, prop)");
+                        ut.writeLog("@(!window[kn[i]])");
+                        temp = [];
+                        for (i = 0; i < kn.length; i++) {
+                            if (!window[kn[i]]) {
+                                temp.push(kn[i]);
+                                if ((temp.length) % 7 === 0) {
+                                    ut.writeLog(temp.join(" , ") + "   <<<");
+                                    temp = [];
+                                }
+                            }
+
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+
+                        ut.writeLog("@Object.getOwnPropertyNames(Window.prototype): ");
+                        temp = [];
+                        for (i = 0; i < pn2.length; i++) {
+                            temp.push(pn2[i]);
+                            if ((temp.length) % 5 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        if (Window.prototype.__proto__ !== Object.prototype) {
+                            let pn3 = Object.getOwnPropertyNames(Window.prototype.__proto__);
+                            let pn4 = Object.getOwnPropertyNames(Window.prototype.__proto__.__proto__);
+                            ut.writeLog("@Object.getOwnPropertyNames(Window.prototype.__proto__): ");
+                            temp = [];
+                            for (i = 0; i < pn3.length; i++) {
+                                temp.push(pn3[i]);
+                                if ((temp.length) % 7 === 0) {
+                                    ut.writeLog(temp.join(" , "));
+                                    temp = [];
+                                }
+                            }
+                            if (temp.length > 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                            ut.writeLog(" ");
+                            
+                            ut.writeLog("@Object.getOwnPropertyNames(Window.prototype.__proto__.__proto__): ");
+                            temp = [];
+                            for (i = 0; i < pn4.length; i++) {
+                                temp.push(pn4[i]);
+                                if ((temp.length) % 7 === 0) {
+                                    ut.writeLog(temp.join(" , "));
+                                    temp = [];
+                                }
+                            }
+                            if (temp.length > 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                            ut.writeLog(" ");
+
+
+                            //ut.assertTrue(Window.prototype.__proto__.__proto__.__proto__ === Object.prototype);
+                        }
+
+
+                        ut.writeLog(window.document.toString());
+                        ut.writeLog({}.toString());
+
+                        let des = Object.getOwnPropertyDescriptor(Window.prototype, "document");
+                        console.log(Window.prototype);
+                        console.log(pn.indexOf("document") + " - " + pn.length);
+                        console.log(pn2.indexOf("document") + " - " + pn2.length);
+
+
+                        ut.writeLog(" ");
+                        ut.endMark("1", "window");
+                        // Test(1) - end
+                    }
+
+                    grab("demo").innerHTML = ut.conclude();
+                } catch (err) {
+                    alert(err.name + ": " + err.message);
+                }
+            }.bind(this);
+            alltests();
+            $(document).ready(function () {
+                try {
+                    txt = "Hello, World!";
+                    $("#show").on("click", alltests);
+                } catch (err) {
+                    alert(err.name + ": " + err.message);
+                }
+            });
+        </script>
+
+    </body>
+</html>

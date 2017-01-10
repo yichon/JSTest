@@ -16,7 +16,44 @@ function type(o) {
     }
     return to;
 }
-;
+//
+function getProto(obj) {
+    if ((typeof obj !== 'object' && typeof obj !== 'function') || obj === null)
+        throw "getProto: object or function expected";
+
+    if (typeof Object.getPrototypeOf === 'function')
+        return Object.getPrototypeOf(obj);
+    if (typeof obj.__proto__ === 'object' &&
+            Object.prototype.isPrototypeOf.call(obj.__proto__, obj))
+        return obj.__proto__;
+    if (typeof obj.constructor === 'function' &&
+            typeof obj.constructor.prototype === 'object' &&
+            Object.prototype.isPrototypeOf.call(obj.constructor.prototype, obj))
+        return obj.constructor.prototype;
+
+    throw "getProto: Your browser doesn't support 'Object.getPrototypeOf'!";
+}
+//
+function setProto(obj, proto) {
+    if ((typeof obj !== 'object' && typeof obj !== 'function') || obj === null)
+        throw "getProto: object or function expected - obj";
+
+    if (typeof proto !== 'object' && typeof proto !== 'function')
+        throw "getProto: object or function expected - proto";
+
+    if (typeof Object.setPrototypeOf === 'function')
+        Object.setPrototypeOf(obj, proto);
+    else if (typeof obj.constructor === 'function' &&
+            typeof obj.constructor.prototype === 'object' &&
+            Object.prototype.isPrototypeOf.call(obj.constructor.prototype, obj))
+        obj.constructor.prototype = proto;
+    else if (typeof obj.__proto__ === 'object' &&
+            Object.prototype.isPrototypeOf.call(obj.__proto__, obj))
+        obj.__proto__ = proto;
+    else
+        throw "getProto: Your browser doesn't support 'Object.setPrototypeOf'!";
+}
+
 
 // Finished
 function isEmptyObj(e) {
@@ -126,11 +163,6 @@ function joCompare(o1, o2) {
         if (kn1.length !== kn2.length)
             return false;
 
-        pn1 = Object.getOwnPropertyNames(o1);
-        pn2 = Object.getOwnPropertyNames(o2);
-        if (pn1.length !== pn2.length)
-            return false;
-
         // enumerable properties
         for (i = 0; i < kn1.length; i++) {
             if (kn2.indexOf(kn1[i]) === -1)
@@ -144,6 +176,11 @@ function joCompare(o1, o2) {
                 trace_pop();
             }
         }
+
+        pn1 = Object.getOwnPropertyNames(o1);
+        pn2 = Object.getOwnPropertyNames(o2);
+        if (pn1.length !== pn2.length)
+            return false;
 
         // non-enumerable properties 
         if (pn1.length !== kn1.length) {
@@ -172,7 +209,9 @@ function joCompare(o1, o2) {
             proto1 = o1.__proto__;
             proto2 = o2.__proto__;
         } else if (typeof o1.constructor === 'function' &&
-                typeof o1.constructor === 'function') {
+                typeof o2.constructor === 'function' &&
+                Object.prototype.isPrototypeOf.call(o1.constructor.prototype, o1) &&
+                Object.prototype.isPrototypeOf.call(o2.constructor.prototype, o2)) {
             proto1 = o1.constructor.prototype;
             proto2 = o2.constructor.prototype;
         } else {
@@ -312,56 +351,96 @@ function deepCompare() {
 }
 
 // Building
-function joClone(obj) {
-    var trace = [];
-    trace.push(obj);
-    var subClone = function (obj) {
-        var copy, i, hasOwn, fs;
-        var isDeep = function (o) {
-            var t;
-            if (o === null)
-                return false;
+var joClone = function (obj) {
+    var trace1 = [], trace2 = [], go = [], pn = [];
+    var subClone, i, isEnumerable, d, enu;
+    isEnumerable = Object.prototype.propertyIsEnumerable;
+    for (i = this; i !== Object.prototype && i; i = getProto(i)) {
+        pn = pn.concat(Object.getOwnPropertyNames(i));
+        console.info("pn: ", pn.length);
+    }
+    for (i = 0; i < pn.length; i++) {
+        if (this[pn[i]]) {
+            d = Object.getOwnPropertyDescriptor(this, pn[i]);
+            enu = isEnumerable.call(this, pn[i]); // d.enumerable
+            if ((!enu || (enu && !(!d.configurable && d.writable)))) {
+                go.push(pn[i]);
+            }
+        }
+    }
+    console.info("go: ", go.length);
+    subClone = function (obj) {
+        var copy, i, pos, pn, d;
+        var isDeep = function (o, go) {
+            var i, t;
+            var isBiFunc = function (o) {
+                var bi_func, s;
+                if (typeof o === 'function')
+                    s = Function.prototype.toString.call(o);
+                else
+                    return false;
+                bi_func = /^(function)[A-Za-z_$][A-Za-z_$0-9]*(\(\)\{\[nativecode\]\})$/;
+                s = s.replace(/\s+/g, ""); // delete spaces
+                s = s.replace(/[\r\n]/g, ""); // delete \r\n
+                return bi_func.test(s) || o === Function.prototype;
+            };
             t = typeof o;
             if (t !== 'object' && t !== 'function')
                 return false;
-            return true;
-        };
-        var isCircular = function (o) {
-            if (trace.indexOf(o) === -1)
+            if (o === null)
                 return false;
-            else
-                return true;
-        };
-
-        if (!isDeep(obj))
-            return obj;
-
-        if (typeof obj === 'function') {
-            fs = obj.toString();
-            if (fs.indexOf("() {\n    [native code]\n}") > -1)
-                return obj;
-            else
-                copy = eval('(' + fs + ')');
-        } else if (typeof obj.constructor === 'function') {
-            copy = new obj.constructor();
-        } else
-            copy = {};
-
-        hasOwn = Object.prototype.hasOwnProperty;
-        for (i in obj) {
-            if (hasOwn.call(obj, i)) {
-                if (isDeep(obj[i]) && !isCircular(obj[i])) {
-                    trace.push(obj[i]);
-                    copy[i] = subClone(obj[i]);
-                    //trace.pop();
-                } else {
-                    copy[i] = obj[i];
+            if (isBiFunc(o))
+                return false;
+            for (i = 0; i < go.length; i++) {
+                if (o === this[go[i]] || o === this[go[i]].prototype) {
+                    return false;
                 }
             }
+            return true;
+        };
+        if (!isDeep(obj, go)) {
+            console.log("!isDeep(obj): " + obj);
+            return obj;
         }
+
+        pos = trace1.indexOf(obj);
+        if (pos > -1) {
+            console.log("pos: " + pos);
+            return trace2[pos];
+        }
+
+        if (typeof obj === 'function') {
+            console.log("eval(*function*)" + Function.prototype.toString.call(obj));
+            copy = eval('(' + Function.prototype.toString.call(obj) + ')');
+        } else {
+            console.log("Object.create(null)");
+            copy = Object.create(null);
+        }
+
+        console.log("******trace.push: " + obj);
+        trace1.push(obj);
+        trace2.push(copy);
+
+        // clone properties 
+        pn = Object.getOwnPropertyNames(obj);
+        console.log(">>>>>" + pn.toString());
+        for (i = 0; i < pn.length; i++) {
+            d = Object.getOwnPropertyDescriptor(obj, pn[i]);
+            console.log("hello: " + pn[i]);
+            Object.defineProperty(copy, pn[i], {
+                enumerable: d.enumerable,
+                configurable: d.configurable,
+                writable: d.writable,
+                value: subClone(obj[pn[i]])
+            });
+            console.log("hi: " + pn[i]);
+        }
+        // prototypes
+        console.log("Object.setPrototypeOf(copy, subClone(proto1))a " + typeof obj);
+        setProto(copy, subClone(getProto(obj)));
 
         return copy;
     };
 
     return subClone(obj);
-}
+}.bind(window);

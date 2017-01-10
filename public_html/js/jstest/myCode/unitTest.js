@@ -57,10 +57,10 @@ function Log(index) {
         var str = "Total: " + total + ", Passed: " +
                 this.passed + ", Failed: " + this.failed +
                 ", Stat: " + rate + "% Passed";
+        var p, f, r;
         console.log("----------\n" + str);
         if (html) {
-            let p = "<span style = 'color:green'>" + this.passed + "</span>";
-            let f, r;
+            p = "<span style = 'color:green'>" + this.passed + "</span>";
             if (this.failed === 0) {
                 f = "<span style = 'color:green'>" + this.failed + "</span>";
                 r = "<span style = 'color:green'>" + rate + "</span>";
@@ -84,7 +84,7 @@ function Log(index) {
             txt = this.index + ". [" + r + "]: (...) ==> (" +
                     this.output + ") - (" + this.expect + ") expected<br>";
         } else if (typeof words === "string")
-            txt = words + "<br>";
+            txt = "<span style = 'color:blue'>" + words + "</span><br>";
 
         this.text += txt;
     };
@@ -92,7 +92,10 @@ function Log(index) {
 //
 function TestCase(num, html) {
     this.log = new Log(num);
-    this.html = html;
+    if (html === undefined)
+        this.html = true;
+    else
+        this.html = html;
 }
 TestCase.prototype.setIndex = function (index) {
     this.log.index = (typeof index === 'number' && !isNaN(index)) ? index : 0;
@@ -113,7 +116,7 @@ TestCase.prototype.conclude = function () {
 };
 // only accept one input and one expected result
 TestCase.prototype.test$ = function (obj, func, input, expected, cpf) {
-    var output, expect, result, compare;
+    var output, expect, result, compare, e;
     var checkParameter = function (obj, func, input, expected, cpf) {
         var e = new Error("Default");
         e.name = "ParameterError";
@@ -159,7 +162,7 @@ TestCase.prototype.test$ = function (obj, func, input, expected, cpf) {
             output = "`Type: " + type(output) + "`";
             expect = "`Type: " + expected.type + "`";
         } else if ("error" in expected) {
-            let e = new Error("No error occured");
+            e = new Error("No error occured");
             e.name = "Failed";
             throw e;
         } else
@@ -195,23 +198,24 @@ TestCase.prototype.test1 = function (obj, func, input, expected, cpf) {
 };
 //accept mutiple inputs and one expected result
 TestCase.prototype.tester = function (obj, func, list, cpf) {
+    var i, e;
     try {
         if (!(this.log instanceof Log) ||
                 !((typeof this.log.index === 'number') && !isNaN(this.log.index)))
             this.log = new Log(0);
 
         if (!(list instanceof Array) || !(list[0] instanceof Array)) {
-            var e = new Error("'input list' - illegal type");
+            e = new Error("'input list' - illegal type");
             e.name = "ParameterError";
             throw e;
         } else {
-            for (let i = 1; i < list.length; i++)
+            for (i = 1; i < list.length; i++)
                 if (!(list[i] instanceof Array)) {
                     e.message = "'function list' - illegal type";
                     throw e;
                 }
         }
-        for (let i in list) {
+        for (i in list) {
             this.test$(obj, func, list[i][0], list[i][1], cpf);
             console.log(this.log.current());
         }
@@ -224,11 +228,12 @@ TestCase.prototype.tester = function (obj, func, list, cpf) {
 };
 //accept mutiple inputs, mutiple functions  and one expected result
 TestCase.prototype.testerX = function (obj, funcs, list, cpf) {
+    var i, j, e;
     try {
         if (!(this.log instanceof Log) ||
                 !((typeof this.log.index === 'number') && !isNaN(this.log.index)))
             this.log = new Log(0);
-        var e = new Error("");
+        e = new Error("");
         e.name = "ParameterError";
         if (!(funcs instanceof Array) || typeof funcs[0] !== "string") {
             e.message = "'function list' - illegal type";
@@ -238,14 +243,14 @@ TestCase.prototype.testerX = function (obj, funcs, list, cpf) {
             e.message = "'input list' - illegal type";
             throw e;
         } else {
-            for (let i = 1; i < list.length; i++)
+            for (i = 1; i < list.length; i++)
                 if (!(list[i] instanceof Array)) {
                     e.message = "'function list' - illegal type";
                     throw e;
                 }
         }
-        for (let i in list) {
-            for (let j in funcs) {
+        for (i in list) {
+            for (j in funcs) {
                 this.test$(obj, funcs[j], list[i][0], list[i][1], cpf);
                 console.log(this.log.current());
             }
@@ -299,13 +304,62 @@ TestCase.prototype.assertNotEqual = function (o1, o2, cpf) {
     }
     return result;
 };
-TestCase.prototype.assertTrue = function(o, strict){
-    if(!strict)
+TestCase.prototype.assertTrue = function (o, notStrict) {
+    var result;
+    if (notStrict)
         o = Boolean(o);
-    return this.assertEqual(o, true);
+    result = (o === true);
+    this.log.addIndex();
+    if (result) {
+        this.log.passed++;
+        this.log.result = 'PASS';
+        this.log.output = '`True`';
+        this.log.expect = '`True`';
+        console.log(this.log.current());
+        this.log.writeLog();
+    } else {
+        this.log.failed++;
+        this.log.result = 'Failed';
+        this.log.output = '`Not True`';
+        this.log.expect = '`True`';
+        console.log(this.log.current());
+        this.log.writeLog();
+    }
+    return result;
 };
-TestCase.prototype.assertFalse = function(o, strict){
-    if(!strict)
+TestCase.prototype.assertFalse = function (o, notStrict) {
+    var result;
+    if (notStrict)
         o = Boolean(o);
-    return this.assertEqual(o, false);
+    result = (o === false);
+    this.log.addIndex();
+    if (result) {
+        this.log.passed++;
+        this.log.result = 'PASS';
+        this.log.output = '`False`';
+        this.log.expect = '`False`';
+        console.log(this.log.current());
+        this.log.writeLog();
+    } else {
+        this.log.failed++;
+        this.log.result = 'Failed';
+        this.log.output = '`Not False`';
+        this.log.expect = '`False`';
+        console.log(this.log.current());
+        this.log.writeLog();
+    }
+    return result;
+};
+TestCase.prototype.startMark = function (num, append) {
+    var s = "Test Start - (" + num + ")";
+    s += (append === undefined) ? "" : " -- " + append;
+    console.log(s);
+    this.log.writeLog(s);
+};
+
+TestCase.prototype.endMark = function (num, append) {
+    var s = "Test End - (" + num + ")";
+    s += (append === undefined) ? "" : " -- " + append;
+    console.log(s);
+    this.log.writeLog(s);
 };

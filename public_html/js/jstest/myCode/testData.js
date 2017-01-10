@@ -4725,6 +4725,7 @@ var data4 =
   }
 };
 
+var dict = Object.setPrototypeOf({b:1}, {a:2});
 var data5 = Object.setPrototypeOf({}, data3);
 var data6 = Object.setPrototypeOf({}, data4);
 

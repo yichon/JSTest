@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Regexr Test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../../jquery-3.1.1.js"></script>
+        <script src="../../../lodash.js"></script>
+        <script src="../obj.js"></script>
+        <script src="../util.js"></script>
+        <script src="../unitTest.js"></script>
+        <script src="../testData.js"></script>
+        <script src="../regExr.js"></script>
+
+    </head>
+    <body>
+        <h1>This is a Regexr Test</h1>
+        <button name="b1" id="show">Refresh!</button>
+        <p></p>
+        <div id="demo"></div>
+        <script></script>
+        <script>
+            var alltests = function () {
+                try {
+                    var ut = new TestCase();
+
+                    {
+                        // Test(1) - Start
+                        ut.startMark("1 - a", "Built-in Functions");
+                        var f = eval('(function () {return "some random string";})');
+                        var fs = f.toString();
+                        var e = eval("(" + fs + ")");
+                        var a = Function;
+                        var b = Object;
+                        var c = String;
+                        var d = Array;
+                        var as = Function.toString();
+                        var bs = Object.toString();
+                        var cs = String.toString();
+                        var ds = Array.toString();
+                        var sample1 = "\nfunction Function() {\n    [native code]\n}\n";
+                        var sample2 = "\nfunction Object() {\n    [native code]\n}\n";
+                        var sample3 = "\nfunction String() {\n    [native code]\n}\n";
+                        var sample4 = "\nfunction Array() {\n    [native code]\n}\n";
+
+                        console.log("-----");
+                        console.log(fs);
+                        console.log(as);
+                        console.log(bs);
+                        console.log(cs);
+                        console.log(ds);
+                        console.log("-----");
+
+                        ut.assertTrue(joCompare(f, e));
+                        ut.assertFalse(isBiFunc(f));
+                        ut.assertFalse(isBiFunc(fs));
+
+                        ut.assertTrue(isBiFunc(a));
+                        ut.assertTrue(isBiFunc(b));
+                        ut.assertTrue(isBiFunc(c));
+                        ut.assertTrue(isBiFunc(d));
+//                        ut.assertTrue(isBiFunc(as));
+//                        ut.assertTrue(isBiFunc(bs));
+//                        ut.assertTrue(isBiFunc(cs));
+//                        ut.assertTrue(isBiFunc(ds));
+//                        ut.assertTrue(isBiFunc(sample1));
+//                        ut.assertTrue(isBiFunc(sample2));
+//                        ut.assertTrue(isBiFunc(sample3));
+//                        ut.assertTrue(isBiFunc(sample4));
+                        ut.endMark("1 - a");
+
+                        ut.startMark("1 - b", "this");
+                        ut.setIndex();
+                        let pn = Object.getOwnPropertyNames(this); //Object.prototype.propertyIsEnumerable()
+                        if (pn.length > 0)
+                            for (let i = 0; i < pn.length; i++) {
+                                if (!Object.prototype.propertyIsEnumerable.call(this, pn[i]) &&
+                                        typeof this[pn[i]] === 'function') {
+                                    ut.writeLog(pn[i]);
+                                    ut.assertTrue(isBiFunc(this[pn[i]]));
+                                }
+
+                            }
+                        ut.endMark("1 - b", "this");
+                        // Test(1) - end
+                        {
+                            // Test(2) - Start
+                            ut.startMark("2", "window");
+                            ut.setIndex();
+                            let pn = Object.getOwnPropertyNames(window);
+                            let kn = Object.keys(window);
+                            let pn2 = Object.getOwnPropertyNames(Window.prototype);
+                            ut.writeLog(kn.toString());
+
+                            let des = Object.getOwnPropertyDescriptor(Window.prototype, "document");
+                            console.log(Window.prototype);
+                            console.log(pn.indexOf("document") + " - " + pn.length);
+                            console.log(pn2.indexOf("document") + " - " + pn2.length);
+                            console.log(Window.prototype.__proto__.__proto__.__proto__ === Object.prototype); // true
+                            console.log(Window.prototype.__proto__ === Object.prototype); // true
+                            console.log(window instanceof Window);  // true
+                            console.log(Window.prototype.isPrototypeOf(window));  // true
+                            // windowTest.html
+                            ut.endMark("2", "window");
+                            // Test(2) - end
+                        }
+                    }
+
+                    //alert("Hello");
+                    grab("demo").innerHTML = ut.conclude();
+                } catch (err) {
+                    alert(err.message);
+                }
+            }.bind(this);
+            alltests();
+            $(document).ready(function () {
+                try {
+                    txt = "Hello, World!";
+                    $("#show").on("click", alltests);
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+        </script>
+
+    </body>
+</html>

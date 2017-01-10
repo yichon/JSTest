@@ -23,7 +23,7 @@
                     
                     alert("Hello");
                 } catch (err) {
-                    alert(err.message);
+                    alert(err.name + ": " + err.message);
                 }
             }.bind(this);
             alltests();
@@ -32,7 +32,7 @@
                     txt = "Hello, World!";
                     $("#show").on("click", alltests);
                 } catch (err) {
-                    alert(err.message);
+                    alert(err.name + ": " + err.message);
                 }
             });
         </script>

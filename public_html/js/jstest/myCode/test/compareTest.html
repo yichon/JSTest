@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="../../../jquery-3.1.1.js"></script>
+        <script src="../../../lodash.js"></script>
         <script src="../obj.js"></script>
         <script src="../util.js"></script>
         <script src="../unitTest.js"></script>
@@ -73,7 +74,7 @@
                         ut.test1(this, "compareContent", [a, b], expected); // 1
                         expected = {value: true}; // Failed                     
                         ut.test1(this, "deepCompare", [a, b], expected); // 2
-                        
+
                         console.log("test end - (1)");
                         ut.writeLog("test end - (1)");
                     }
@@ -201,7 +202,7 @@
                         ut.test1(this, "compareContent", [a, b], expected); // 3
                         expected = {value: false}; // Failed 
                         ut.test1(this, "deepCompare", [a, b], expected); // 4
-                        
+
                         a = {a: 1, b: 2, c: 3}, b = {a: 1, b: 2, c: 3};
                         a.__proto__ = null;
                         ut.test1(this, "compareContent", [a, b], expected); // 5
@@ -209,11 +210,11 @@
                         ut.test1(this, "compareContent", [a, b], expected); // 6
                         a.__proto__ = {};
                         ut.test1(this, "compareContent", [a, b], expected);  // 7
-                        a.__proto__ = {a:1};
+                        a.__proto__ = {a: 1};
                         ut.test1(this, "compareContent", [a, b], expected);  // 8
                         a.__proto__ = Object.create(Object.prototype);
                         ut.test1(this, "compareContent", [a, b], expected);  // 9
-                        
+
                         a = {a: 1, b: 2, c: 3}, b = {a: 1, b: 2, c: 3};
                         a.constructor = null;
                         ut.test1(this, "compareContent", [a, b], expected); // 10
@@ -221,11 +222,11 @@
                         ut.test1(this, "compareContent", [a, b], expected); // 11
                         a.constructor = {};
                         ut.test1(this, "compareContent", [a, b], expected);  // 12
-                        a.constructor = {a:1};
+                        a.constructor = {a: 1};
                         ut.test1(this, "compareContent", [a, b], expected);  // 13
                         a.constructor = Object.create(Object.prototype);
                         ut.test1(this, "compareContent", [a, b], expected);  // 14
-                        
+
                         let m = function () {
                             alert("HI");
                         };
@@ -243,7 +244,7 @@
                         ut.test1(this, "compareContent", [m, n], expected); // 19
                         expected = {value: false}; // Failed ?
                         ut.test1(this, "deepCompare", [m.prototype, n.prototype], expected); // 20
-                        
+
                         expected = {value: false};
                         m.prototype = null;
                         ut.test1(this, "compareContent", [m, n], expected); // 21
@@ -256,15 +257,15 @@
                         expected = {value: true}; // Failed ?
                         ut.test1(this, "deepCompare", [m, n], expected); // 26
                         expected = {value: false};
-                        m.prototype = {a:1};
+                        m.prototype = {a: 1};
                         ut.test1(this, "compareContent", [m, n], expected);  // 27
                         m.prototype = Object.create(Object.prototype);
                         ut.test1(this, "compareContent", [m, n], expected);  // 28  ******
                         expected = {value: true}; // Failed ?
                         ut.test1(this, "deepCompare", [m, n], expected); // 29
                         expected = {value: false};
-                        m.prototype = {a:1};
-                        n.prototype = {a:2};
+                        m.prototype = {a: 1};
+                        n.prototype = {a: 2};
                         ut.test1(this, "compareContent", [m, n], expected);  // 30
 
                         let x = Object.create(Object.prototype);
@@ -283,7 +284,7 @@
                         ut.test1(this, "compareContent", [q.constructor, {}.constructor], expected); // 34
                         ut.test1(this, "compareContent", [(function () {}).prototype, (function () {}).prototype], expected); // 35
                         ut.test1(this, "compareContent", [(function () {}).prototype.constructor, (function () {}).prototype.constructor], expected); // 36
-                        
+
                         expected = {value: false};
                         ut.test1(this, "compareContent", [(function () {}).prototype, {}], expected); // 37  ******
                         ut.test1(this, "deepCompare", [(function () {}).prototype, {}], expected); // 38  ******
@@ -309,7 +310,7 @@
                         ut.test1(this, "compareContent", [Object.prototype.__proto__, {a: 1}], expected); // 6
                         ut.test1(this, "compareContent", [null, {a: 1}], expected); // 7
                         ut.test1(this, "deepCompare", [null, {a: 1}], expected); // 8
-                        
+
                         console.log("test end - (5)");
                         ut.writeLog("test end - (5)");
 
@@ -329,16 +330,17 @@
                             expected = {value: false}; //  
                             ut.test1(this, "joCompare", [y, z], expected); //  1
                             ut.test1(this, "deepCompare", [y, z], expected); // 2
-                            
+
                             y = {a: {b: {c: 1}, d: 2}};
                             y.a.b.c = y;
                             z = {a: {b: {c: 1}, d: 2}};
                             z.a.b.c = z;
                             expected = {value: true}; //  
                             ut.test1(this, "joCompare", [y, z], expected); //  3
+                            ut.assertTrue(_.isEqual(y, z));
                             expected = {value: false}; // Failed ?
                             ut.test1(this, "deepCompare", [y, z], expected); // 4
-                            
+
                             y = {a: {b: {c: 1}, d: 2}};
                             y.a.b.c = y;
                             z = {a: {b: {c: 1}, d: 2}};
@@ -346,37 +348,60 @@
                             expected = {value: false}; //  
                             ut.test1(this, "joCompare", [y, z], expected); //  5
                             ut.test1(this, "deepCompare", [y, z], expected); // 6
-                            
+                            ut.assertFalse(_.isEqual(y, z));
+
                             y = {a: {b: {c: 1}, d: 2}};
                             z = {a: {b: {c: 1}, d: 2}};
                             expected = {value: true}; //  
                             ut.test1(this, "joCompare", [y, z], expected); //  7
                             ut.test1(this, "deepCompare", [y, z], expected); // 8
-                            
+                            ut.assertTrue(_.isEqual(y, z));
+
                             ut.test1(this, "joCompare", [data1, data2], expected); //  9
                             ut.test1(this, "deepCompare", [data1, data2], expected); // 10
-                            
+
                             expected = {value: false};
                             ut.test1(this, "joCompare", [data3, data4], expected); //  11
                             ut.test1(this, "deepCompare", [data3, data4], expected); // 12
-                            
+
                             ut.test1(this, "joCompare", [data5, data6], expected); //  13
                             ut.test1(this, "deepCompare", [data5, data6], expected); // 14
-                            
+
                             expected = {value: true};
                             ut.test1(this, "joCompare", [data7, data8], expected); //  15
                             ut.test1(this, "deepCompare", [data7, data8], expected); // 16
-                            
+
                             expected = {value: true};
                             ut.test1(this, "joCompare", [{}, Object.create(Object.prototype)], expected); //  17
                             ut.test1(this, "deepCompare", [{}, Object.create(Object.prototype)], expected); // 18
-                            
+
                             ut.test1(this, "joCompare", [{}, new Object()], expected); //  19
                             ut.test1(this, "deepCompare", [{}, new Object()], expected); // 20
-                           
+                            
+                            let a = {
+                                a: 1,
+                                b: 2,
+                                c: function () {
+                                    return 1;
+                                }
+                            };
+                            let b = {
+                                a: 1,
+                                b: 2,
+                                c: function () {
+                                    return 1;
+                                }
+                            };                            
+                            ut.assertTrue(joCompare(a, b));
+                            ut.assertTrue(deepCompare(a, b));
+                            
+                            ut.writeLog("* '_.isEqual' Failed: `True` expected here *");
+                            ut.assertFalse(_.isEqual(a, b));
+                            ut.writeLog("* end *");
+
                             console.log("test end - (6)");
                             ut.writeLog("test end - (6)");
-                            
+
                             //alert(0 === false);
                         } catch (err) {
                             alert(err);
@@ -387,7 +412,7 @@
                 } catch (err) {
                     alert(err.message);
                 }
-                
+
                 //alert("Hello");
             }.bind(this);
             alltests();

@@ -1,29 +1,63 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Comparison Test</title>
+        <title>Simple Test</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="../../../jquery-3.1.1.js"></script>
+        <script src="../../../lodash.js"></script>
         <script src="../obj.js"></script>
+        <script src="../util.js"></script>
         <script src="../unitTest.js"></script>
+        <script src="../regExr.js"></script>
+        <script src="../testData.js"></script>
 
     </head>
     <body>
-        <h1>This is a JS Test</h1>
+        <h1>This is a simple JS Test</h1>
         <button name="b1" id="show">Click me!</button>
         <p></p>
         <div id="demo"></div>
         <script></script>
         <script>
             try {
-                let ctr = 1;
-                let expected;
-                expected = {value: true};
-                ctr = test1(this, "compareContent", [undefined, Object.create(null), true], expected, ctr); // 14  - Failed
+                var ut = new TestCase();
+                //var dict = Object.setPrototypeOf({}, null);  // safari will fail on this 
+                //var dict = Object.setPrototypeOf(Object.create(null), Object.prototype);
+                //var dict = Object.setPrototypeOf({}, {});
+                console.log(typeof Object.setPrototypeOf);
+                console.log(typeof {}.__proto__);
+                console.log(typeof {}.constructor);
+                
+                {
+                    ut.startMark(1);
+                    //console.log(Object.prototype.__defineGetter__);
+                    ut.assertNotEqual((function () {}), Function.prototype, joCompare);
 
+                    var a = {a: 1, b: {c: 2}, d: function (o) {
+                            return "hello world!";
+                        }};
+                    var b = joClone(a);
+
+                    ut.assertEqual(a, b, joCompare);
+
+                    var c = {a: 1, b: {c: 2}};
+                    var d = joClone(c);
+                    ut.assertEqual(c, d, joCompare);
+                    ut.assertEqual(c, d, _.isEqual);
+                    console.log(typeof Function.prototype);
+                    console.log(Function.prototype.toString());
+                    var e = function (o) {
+                        return "hello world!";
+                    };
+                    var f = joClone(e);
+                    ut.assertEqual(e, f, joCompare);
+
+                    ut.endMark(1);
+                }
+                grab("demo").innerHTML = ut.conclude();
             } catch (err) {
-                alert(err.message);
+                alert(err.name + ": " + err.message);
             }
 
             $(document).ready(function () {
@@ -34,7 +68,7 @@
                         $("#demo").html(txt);
                     });
                 } catch (err) {
-                    alert(err.message);
+                    alert(err.name + ": " + err.message);
                 }
             });
         </script>

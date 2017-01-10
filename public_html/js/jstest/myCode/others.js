@@ -127,3 +127,51 @@ traverse2 = function (o1, o2, mode) {
 //
 //newPara = words.join(' ');
 //console.log(newPara);
+
+
+//    // enumeralbe properties
+//        j = 0;
+//        hasOwn = Object.prototype.hasOwnProperty;
+//        for (i in obj) {
+//            if (hasOwn.call(obj, i)) {
+//                j++;
+//                if (isDeep(obj[i]) && !isCircular(obj[i])) {
+//                    trace.push(obj[i]);
+//                    copy[i] = subClone(obj[i]);
+//                    //trace.pop();
+//                } else {
+//                    copy[i] = obj[i];
+//                }
+//            }
+//        }
+//        
+//        // non-enumerable properties 
+//        pn = Object.getOwnPropertyNames(obj);
+//        if (pn.length > j) {
+//            isEnumerable = Object.prototype.propertyIsEnumerable;
+//            for (i = 0; i < pn.length; i++) {
+//                if (!isEnumerable.call(obj, pn[i])) {
+//                    
+//                    if (isDeep(obj[i]) && !isCircular(obj[i])) {
+//                        trace.push(obj[i]);
+//                        copy[i] = subClone(obj[i]);
+//                        //trace.pop();
+//                    } else {
+//                        copy[i] = obj[i];
+//                    }
+//                }
+//            }
+//        }
+
+//        var isCircular = function (o) {
+//            if (trace1.indexOf(o) === -1)
+//                return false;
+//            else
+//                return true;
+//        };
+
+
+//        else if (typeof obj.constructor === 'function' &&
+//                obj instanceof obj.constructor) { console.log("new obj.constructor()");
+//            copy = new obj.constructor();
+//        } 

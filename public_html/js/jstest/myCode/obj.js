@@ -352,26 +352,29 @@ function deepCompare() {
 
 // Building
 var joClone = function (obj) {
-    var trace1 = [], trace2 = [], go = [], pn = [];
+    var trace1 = [], trace2 = [], bio = [], pn = [];
     var subClone, i, isEnumerable, d, enu;
     isEnumerable = Object.prototype.propertyIsEnumerable;
+    // get all the globe objects
     for (i = this; i !== Object.prototype && i; i = getProto(i)) {
         pn = pn.concat(Object.getOwnPropertyNames(i));
         console.info("pn: ", pn.length);
     }
+    // get the built-in globe objects.
     for (i = 0; i < pn.length; i++) {
-        if (this[pn[i]]) {
+        if ((typeof this[pn[i]] === 'object' ||
+                typeof this[pn[i]] === 'function') && this[pn[i]] !== null) {
             d = Object.getOwnPropertyDescriptor(this, pn[i]);
             enu = isEnumerable.call(this, pn[i]); // d.enumerable
             if ((!enu || (enu && !(!d.configurable && d.writable)))) {
-                go.push(pn[i]);
+                bio.push(pn[i]);
             }
         }
     }
-    console.info("go: ", go.length);
+    console.info("bio: ", bio.length);
     subClone = function (obj) {
         var copy, i, pos, pn, d;
-        var isDeep = function (o, go) {
+        var isDeep = function (o, bio) {
             var i, t;
             var isBiFunc = function (o) {
                 var bi_func, s;
@@ -391,15 +394,23 @@ var joClone = function (obj) {
                 return false;
             if (isBiFunc(o))
                 return false;
-            for (i = 0; i < go.length; i++) {
-                if (o === this[go[i]] || o === this[go[i]].prototype) {
+
+            for (i = 0; i < bio.length; i++) {
+                if (o === this[bio[i]])
+                    return false;
+                if (typeof this[bio[i]] === 'function' &&
+                        o === this[bio[i]].prototype) {
                     return false;
                 }
+
             }
+
             return true;
         };
-        if (!isDeep(obj, go)) {
-            console.log("!isDeep(obj): " + obj);
+
+        if (!isDeep(obj, bio)) {
+            console.log("!isDeep(obj): ");
+            //console.log("!isDeep(obj): " + obj);
             return obj;
         }
 
@@ -409,15 +420,36 @@ var joClone = function (obj) {
             return trace2[pos];
         }
 
-        if (typeof obj === 'function') {
-            console.log("eval(*function*)" + Function.prototype.toString.call(obj));
-            copy = eval('(' + Function.prototype.toString.call(obj) + ')');
-        } else {
+        if (typeof obj === 'function' || obj instanceof RegExp) {
+            console.log("eval(*function/RegExp*)" + obj.constructor.prototype.toString.call(obj));
+            copy = eval('(' + obj.constructor.prototype.toString.call(obj) + ')');
+        } else if (Object.prototype.toString.call(obj) === '[object Date]' || 
+                obj instanceof Number) {
+            console.log("new Date/Number(+obj)");
+            copy = new obj.constructor(+obj);
+        } 
+//        else if (obj instanceof RegExp) {
+//            d = obj.toString();
+//            i = d.lastIndexOf("/");
+//            d = i > -1 ? d.slice(i + 1) : "";
+//            console.log("new RegExp");
+//            copy = new RegExp(obj.source, d);
+//            copy = eval('(' + obj.toString() + ')');
+//        } 
+        else if (obj instanceof String) {
+            copy = new obj.constructor(obj.toString());
+        }
+//        else if (typeof obj.constructor === 'function' &&
+//                obj instanceof obj.constructor) {
+//            console.log("new obj.constructor()");
+//            copy = new obj.constructor();
+//        } 
+        else {
             console.log("Object.create(null)");
             copy = Object.create(null);
         }
 
-        console.log("******trace.push: " + obj);
+        console.log("******trace.push: " + typeof obj);
         trace1.push(obj);
         trace2.push(copy);
 
@@ -436,8 +468,13 @@ var joClone = function (obj) {
             console.log("hi: " + pn[i]);
         }
         // prototypes
-        console.log("Object.setPrototypeOf(copy, subClone(proto1))a " + typeof obj);
-        setProto(copy, subClone(getProto(obj)));
+        console.log("setProto(copy, subClone(getProto(obj))) a: " + Object.prototype.toString.call(copy));
+        var y = getProto(obj);
+        console.log("setProto(copy, subClone(getProto(obj))) b ");
+        var x = subClone(y);
+        console.log("setProto(copy, subClone(getProto(obj))) c ");
+        setProto(copy, x);
+        //setProto(copy, subClone(getProto(obj)));
 
         return copy;
     };

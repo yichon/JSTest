@@ -106,6 +106,7 @@
                         ut.assertTrue(b.d.toString() === a.d.toString()); //18
                         ut.assertFalse(b.d === a.d); //19
                         ut.assertEqual(a.d, b.d, joCompare);  // 20
+                        ut.assertTrue(typeof b.d === 'function'); // 21
 
                         ut.endMark(2);
                         //Test End - (2)
@@ -205,7 +206,15 @@
                         
                         let e = window.joClone.call({}, a);
                         ut.assertEqual(a, e, joCompare); //  15  // .bind(window);
-                        //ut.assertTrue(b.d === Array);  // 15
+                        
+                        ut.assertNotEqual(a.d, b.d); // 16
+                        ut.assertEqual(a.d, b.d, joCompare);  // 17
+                        ut.assertTrue(b.d instanceof Array); // 18
+                        ut.assertTrue(b.d[0] === null);  // 19
+                        ut.assertTrue(b.d[1] === "astring"); // 20
+                        ut.assertTrue(b.d[2] === 1); // 21
+                        
+                        
                         ut.endMark(5);
                         //Test End - (5)
                     }
@@ -245,7 +254,36 @@
                         //Test start - (7)
                         ut.startMark(7);
                         ut.setIndex();
+                        let a = {a: 1, b: {c: 2}, d: new Date()};
+                        let b = joClone(a);
+                        let c = {a: 1, b: {c: 2}, d: new Date(10)};
+                        let d = {a: 1, b: {c: 2}, d: new Date()};
+                        ut.assertNotEqual(a, c, joCompare);  // 1
+                        ut.assertNotEqual(a, c);  // 2
+                        ut.assertEqual(a, d, joCompare);  // 3
+                        ut.assertNotEqual(a, d);  // 4
+                        ut.assertEqual(a, b, joCompare);  // 5
+                        ut.assertNotEqual(a, b);  // 6
+                        ut.assertNotEqual(c, b, joCompare);  // 7
+                        ut.assertNotEqual(c, b);  // 8
+                        ut.assertEqual(a.b, b.b, joCompare);  // 9 
+                        ut.assertNotEqual(a.b, b.b);  // 10
+                        ut.assertEqual(a.a, b.a, joCompare);  // 11
+                        ut.assertEqual(a.a, b.a);  // 12
+                        ut.assertEqual({c: 2}, b.b, joCompare);  // 13
+                        ut.assertNotEqual({c: 2}, b.b);  // 14
                         
+                        ut.assertTrue(b.d instanceof Date);  // 15
+                        ut.assertTrue(a.d instanceof Date);  // 16
+                        ut.writeLog("b.d.toString(): " + Object.prototype.toString.call(b.d));
+                        ut.writeLog("b.d.toString(): " + b.d.toString()); // 
+                        ut.writeLog("a.d.toString(): " + a.d.toString());
+                        ut.writeLog("c.d.toString(): " + c.d.toString());
+                        ut.writeLog("+a.d: " + typeof +a.d + " : " + +a.d);
+                        ut.assertEqual(a.d, b.d, joCompare);  // 17
+                        ut.assertNotEqual(b.d, c.d, joCompare);  // 18
+                        ut.assertNotEqual(a.d, b.d);  // 19
+                        ut.assertNotEqual(c.d, b.d);  // 20
                         
                         ut.endMark(7);
                         //Test End - (7)
@@ -255,9 +293,152 @@
                         //Test start - (8)
                         ut.startMark(8);
                         ut.setIndex();
+                        let a = {a: 1, b: {c: 2}, d: new RegExp(/w3schools/ig)};
+                        let b = joClone(a);
+                        let c = {a: 1, b: {c: 2}, d: new RegExp(/[a-z]/i)};
+                        let d = {a: 1, b: {c: 2}, d: new RegExp(/w3schools/ig)};
+                        ut.assertNotEqual(a, c, joCompare);  // 1
+                        ut.assertNotEqual(a, c);  // 2
+                        ut.assertEqual(a, d, joCompare);  // 3
+                        ut.assertNotEqual(a, d);  // 4
+                        ut.assertEqual(a, b, joCompare);  // 5
+                        ut.assertNotEqual(a, b);  // 6
+                        ut.assertNotEqual(c, b, joCompare);  // 7
+                        ut.assertNotEqual(c, b);  // 8
+                        ut.assertEqual(a.b, b.b, joCompare);  // 9 
+                        ut.assertNotEqual(a.b, b.b);  // 10
+                        ut.assertEqual(a.a, b.a, joCompare);  // 11
+                        ut.assertEqual(a.a, b.a);  // 12
+                        ut.assertEqual({c: 2}, b.b, joCompare);  // 13
+                        ut.assertNotEqual({c: 2}, b.b);  // 14
+                        
+                        ut.assertTrue(b.d instanceof RegExp);  // 15
+                        ut.assertTrue(a.d instanceof RegExp);  // 16
+//                        ut.writeLog("b.d.toString(): " + Object.prototype.toString.call(b.d));
+                        ut.writeLog("b.d.toString(): " + b.d.toString()); // 
+                        ut.writeLog("a.d.toString(): " + a.d.toString());
+                        ut.writeLog("c.d.toString(): " + c.d.toString());
+//                        ut.writeLog("+a.d: " + typeof +a.d + " : " + +a.d);
+                        ut.assertEqual(a.d, b.d, joCompare);  // 17
+                        ut.assertNotEqual(b.d, c.d, joCompare);  // 18
+                        ut.assertNotEqual(a.d, b.d);  // 19
+                        ut.assertNotEqual(c.d, b.d);  // 20
+                        
+                        let f = {a: 1, b: {c: 2}, d: new RegExp(/w3schools/)};
+                        let g = joClone(f);
+                        ut.assertEqual(f, g, joCompare);  // 21
+                        ut.assertNotEqual(f, g);  // 22
+                        
+                        ut.assertTrue(f.d instanceof RegExp);  // 23
+                        ut.assertTrue(g.d instanceof RegExp);  // 24
+                        ut.writeLog("f.d.toString(): " + f.d.toString()); // 
+                        ut.writeLog("g.d.toString(): " + g.d.toString());
+                        ut.assertEqual(f.d, g.d, joCompare);  // 25
+                        ut.assertNotEqual(g.d, c.d, joCompare);  // 26
+                        ut.assertNotEqual(f.d, g.d);  // 27
+                        ut.assertNotEqual(c.d, g.d);  // 28
                         
                         ut.endMark(8);
                         //Test End - (8)
+                    }
+                    
+                    {
+                        //Test start - (9)
+                        ut.startMark(9);
+                        ut.setIndex();
+                        let a = {a: 1, b: {c: 2}, d: new String("astring")};
+                        let b = joClone(a);
+                        let c = {a: 1, b: {c: 2}, d: new String("string")};
+                        let d = {a: 1, b: {c: 2}, d: new String("astring")};
+                        ut.assertNotEqual(a, c, joCompare);  // 1
+                        ut.assertNotEqual(a, c);  // 2
+                        ut.assertEqual(a, d, joCompare);  // 3
+                        ut.assertNotEqual(a, d);  // 4
+                        ut.assertEqual(a, b, joCompare);  // 5
+                        ut.assertNotEqual(a, b);  // 6
+                        ut.assertNotEqual(c, b, joCompare);  // 7
+                        ut.assertNotEqual(c, b);  // 8
+                        ut.assertEqual(a.b, b.b, joCompare);  // 9 
+                        ut.assertNotEqual(a.b, b.b);  // 10
+                        ut.assertEqual(a.a, b.a, joCompare);  // 11
+                        ut.assertEqual(a.a, b.a);  // 12
+                        ut.assertEqual({c: 2}, b.b, joCompare);  // 13
+                        ut.assertNotEqual({c: 2}, b.b);  // 14
+                        
+                        ut.assertTrue(b.d instanceof String);  // 15
+                        ut.assertTrue(a.d instanceof String);  // 16
+//                        ut.writeLog("b.d.toString(): " + Object.prototype.toString.call(b.d));
+                        ut.writeLog("b.d.toString(): " + b.d.toString()); // 
+                        ut.writeLog("a.d.toString(): " + a.d.toString());
+                        ut.writeLog("c.d.toString(): " + c.d.toString());
+//                        ut.writeLog("+a.d: " + typeof +a.d + " : " + +a.d);
+                        ut.assertEqual(a.d, b.d, joCompare);  // 17
+                        ut.assertNotEqual(b.d, c.d, joCompare);  // 18
+                        ut.assertNotEqual(a.d, b.d);  // 19
+                        ut.assertNotEqual(c.d, b.d);  // 20
+                        ut.endMark(9);
+                        //Test End - (9)
+                    }
+                    
+                    {
+                        //Test start - (10)
+                        ut.startMark(10);
+                        ut.setIndex();
+                        let a = {a: 1, b: {c: 2}, d: new Number(33)};
+                        let b = joClone(a);
+                        let c = {a: 1, b: {c: 2}, d: new Number(34)};
+                        let d = {a: 1, b: {c: 2}, d: new Number(33)};
+                        ut.assertNotEqual(a, c, joCompare);  // 1
+                        ut.assertNotEqual(a, c);  // 2
+                        ut.assertEqual(a, d, joCompare);  // 3
+                        ut.assertNotEqual(a, d);  // 4
+                        ut.assertEqual(a, b, joCompare);  // 5
+                        ut.assertNotEqual(a, b);  // 6
+                        ut.assertNotEqual(c, b, joCompare);  // 7
+                        ut.assertNotEqual(c, b);  // 8
+                        ut.assertEqual(a.b, b.b, joCompare);  // 9 
+                        ut.assertNotEqual(a.b, b.b);  // 10
+                        ut.assertEqual(a.a, b.a, joCompare);  // 11
+                        ut.assertEqual(a.a, b.a);  // 12
+                        ut.assertEqual({c: 2}, b.b, joCompare);  // 13
+                        ut.assertNotEqual({c: 2}, b.b);  // 14
+                        
+                        ut.assertTrue(b.d instanceof Number);  // 15
+                        ut.assertTrue(a.d instanceof Number);  // 16
+//                        ut.writeLog("b.d.toString(): " + Object.prototype.toString.call(b.d));
+//                        ut.writeLog("b.d.toString(): " + b.d.toString()); // 
+//                        ut.writeLog("a.d.toString(): " + a.d.toString());
+//                        ut.writeLog("c.d.toString(): " + c.d.toString());
+//                        ut.writeLog("+a.d: " + typeof +a.d + " : " + +a.d);
+                        ut.writeLog(b.d);
+                        ut.writeLog(" ");
+                        ut.assertEqual(a.d, b.d, joCompare);  // 17
+                        ut.assertNotEqual(b.d, c.d, joCompare);  // 18
+                        ut.assertNotEqual(a.d, b.d);  // 19
+                        ut.assertNotEqual(c.d, b.d);  // 20
+                        ut.assertTrue(typeof b.d === 'object');  // 21
+                        ut.assertTrue(typeof a.d === 'object');  // 21
+                        
+                        ut.endMark(10);
+                        //Test End - (10)
+                    }
+                    
+                    {
+                        //Test start - (11)
+                        ut.startMark(11);
+                        ut.setIndex();
+                        
+                        ut.endMark(11);
+                        //Test End - (11)
+                    }
+                    
+                    {
+                        //Test start - (12)
+                        ut.startMark(12);
+                        ut.setIndex();
+                        
+                        ut.endMark(12);
+                        //Test End - (12)
                     }
                     //alert("Hello");
                     grab("demo").innerHTML = ut.conclude();

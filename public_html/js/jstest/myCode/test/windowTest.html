@@ -245,8 +245,11 @@
                         }
                         ut.writeLog(" ");
 
-
+                        ut.writeLog("@Object.getOwnPropertyNames(Window): ");
+                        ut.writeLog("pn.length: " + pn.length);
+                        ut.writeLog(" ");
                         ut.writeLog("@Object.getOwnPropertyNames(Window.prototype): ");
+                        ut.writeLog("pn2.length: " + pn2.length);
                         temp = [];
                         for (i = 0; i < pn2.length; i++) {
                             temp.push(pn2[i]);
@@ -265,6 +268,7 @@
                             let pn3 = Object.getOwnPropertyNames(Window.prototype.__proto__);
                             let pn4 = Object.getOwnPropertyNames(Window.prototype.__proto__.__proto__);
                             ut.writeLog("@Object.getOwnPropertyNames(Window.prototype.__proto__): ");
+                            ut.writeLog("pn3.length: " + pn3.length);
                             temp = [];
                             for (i = 0; i < pn3.length; i++) {
                                 temp.push(pn3[i]);
@@ -278,8 +282,9 @@
                                 temp = [];
                             }
                             ut.writeLog(" ");
-                            
+
                             ut.writeLog("@Object.getOwnPropertyNames(Window.prototype.__proto__.__proto__): ");
+                            ut.writeLog("pn4.length: " + pn4.length);
                             temp = [];
                             for (i = 0; i < pn4.length; i++) {
                                 temp.push(pn4[i]);
@@ -294,6 +299,13 @@
                             }
                             ut.writeLog(" ");
 
+                            if ("chrome" in window) {
+                                ut.writeLog("For Chrome Browser: ");
+                                ut.writeLog("chrome: " + typeof window.chrome);
+                                ut.writeLog("location: " + typeof window.location);
+                                ut.writeLog(" ");
+                            }
+
 
                             //ut.assertTrue(Window.prototype.__proto__.__proto__.__proto__ === Object.prototype);
                         }
@@ -301,6 +313,10 @@
 
                         ut.writeLog(window.document.toString());
                         ut.writeLog({}.toString());
+                        ut.writeLog("typeof Array； " + typeof Array);
+                        ut.writeLog("typeof Object； " + typeof Object);
+                        ut.writeLog("typeof Date； " + typeof Date);
+                        ut.writeLog("Date in window； " + Date in window);
 
                         let des = Object.getOwnPropertyDescriptor(Window.prototype, "document");
                         console.log(Window.prototype);
@@ -311,6 +327,104 @@
                         ut.writeLog(" ");
                         ut.endMark("1", "window");
                         // Test(1) - end
+                    }
+
+                    {
+                        // Test(2) - Start
+                        ut.startMark("2", "<br>");
+                        ut.setIndex();
+                        var bio = [], pn = [], custom = [], others = [];
+                        var i, isEnumerable, d, enu;
+                        isEnumerable = Object.prototype.propertyIsEnumerable;
+                        // get all the globe objects
+                        for (i = this; i !== Object.prototype && i; i = getProto(i)) {
+                            pn = pn.concat(Object.getOwnPropertyNames(i));
+                            console.info("pn: ", pn.length);
+                        }
+                        // get the built-in globe objects.
+                        for (i = 0; i < pn.length; i++) {
+                            if ((typeof this[pn[i]] === 'object' ||
+                                    typeof this[pn[i]] === 'function') && this[pn[i]] !== null) {
+                                d = Object.getOwnPropertyDescriptor(this, pn[i]);
+                                enu = isEnumerable.call(this, pn[i]); // d.enumerable
+                                if ((!enu || (enu && !(!d.configurable && d.writable)))) {
+                                    bio.push(pn[i]);
+                                } else
+                                    custom.push(pn[i]);
+                            } else
+                                others.push(pn[i]);
+                        }
+
+                        ut.writeLog("@BiO: ");
+                        ut.writeLog("@BiO.length / pn.length: " + bio.length + "/" + pn.length);
+                        temp = [];
+                        for (i = 0; i < bio.length; i++) {
+                            temp.push(bio[i]);
+                            if ((temp.length) % 7 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog("@Custom: ");
+                        ut.writeLog("@custom.length: " + custom.length);
+                        temp = [];
+                        for (i = 0; i < custom.length; i++) {
+                            temp.push(custom[i]);
+                            if ((temp.length) % 7 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog("@Others: ");
+                        ut.writeLog("@others.length: " + others.length);
+                        temp = [];
+                        for (i = 0; i < others.length; i++) {
+                            temp.push(others[i]);
+                            if ((temp.length) % 7 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog("@Others Type: ");
+                        temp = [];
+                        for (i = 0; i < others.length; i++) {
+                            temp.push(type(window[others[i]]));
+                            if ((temp.length) % 7 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+                        ut.writeLog('pn.indexOf("Date"): ' + pn.indexOf("Date"));
+                        ut.writeLog('bio.indexOf("Date"): ' + bio.indexOf("Date"));
+                        ut.writeLog('typeof /[a-z]/i :  ' + typeof /[a-z]/i);
+
+
+                        ut.writeLog(" ");
+                        ut.endMark("2", "");
+                        // Test(2) - end
                     }
 
                     grab("demo").innerHTML = ut.conclude();

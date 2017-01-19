@@ -23,8 +23,8 @@
         <script>
             var alltests = function () {
                 try {
-                    var ut = new TestCase();
-                   
+                    var ut = TestCase.getInstance();
+
                     {
                         //Test Start - (1)
                         ut.startMark(1);
@@ -48,7 +48,7 @@
                         ut.assertEqual(a.a, b.a);  // 12
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 13
                         ut.assertNotEqual({c: 2}, b.b);  // 14
-                        
+
                         ut.assertEqual(a.b, b.b, joCompare); // 15
                         ut.assertFalse(a.b === b.b); // 16
                         ut.assertEqual(a, b, _.isEqual);  // 17
@@ -76,19 +76,19 @@
                         ut.assertEqual(a, d, joCompare);  // 3
                         ut.assertNotEqual(a, d);  // 4
                         ut.assertEqual(a, b, joCompare);  // 5
-                        
+
                         //ut.assertEqual(a, b, _.isEqual); // 
                         console.log(a.d.toString());
                         console.log(b.d.toString());
                         console.log(a.d.toString() === b.d.toString());
-                        ut.assertEqual((function(){}), (function(){}), joCompare);  // 6
-                        ut.assertEqual((function(){}).prototype, (function(){}).prototype, joCompare);  // 7
+                        ut.assertEqual((function () {}), (function () {}), joCompare);  // 6
+                        ut.assertEqual((function () {}).prototype, (function () {}).prototype, joCompare);  // 7
                         ut.assertEqual(a.d.prototype, b.d.prototype, joCompare);  // 8
                         console.log(a.d.prototype);
                         console.log(a.d.prototype.constructor.name);
                         console.log(Object.prototype.propertyIsEnumerable.call(a.d.prototype.constructor, "name"));
                         console.log(b.d.prototype);
-                       console.log(_.reduce(a, function (result, value, key) {
+                        console.log(_.reduce(a, function (result, value, key) {
                             return joCompare(value, b[key]) ?
                                     result : result.concat(key);
                         }, []));
@@ -102,7 +102,7 @@
                         ut.assertEqual(a.a, b.a);  // 15
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 16
                         ut.assertNotEqual({c: 2}, b.b);  // 17
-                        
+
                         ut.assertTrue(b.d.toString() === a.d.toString()); //18
                         ut.assertFalse(b.d === a.d); //19
                         ut.assertEqual(a.d, b.d, joCompare);  // 20
@@ -134,7 +134,7 @@
                         ut.assertEqual(a.a, b.a);  // 12
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 13
                         ut.assertNotEqual({c: 2}, b.b);  // 14
-                        
+
                         ut.assertTrue(b.d === Array);  // 15
 
                         ut.endMark(3);
@@ -174,10 +174,10 @@
                         ut.assertNotEqual(a, b, deepCompare);  // 16
                         ut.assertNotEqual(a, d, deepCompare);  // 17
                         ut.writeLog("* end *");
-                        
+
                         ut.assertTrue(b.d === b); // 18
                         ut.assertFalse(b.d === a.d); // 19
-                        
+
                         ut.endMark(4);
                         //Test End - (4)
                     }
@@ -203,22 +203,22 @@
                         ut.assertEqual(a.a, b.a);  // 12
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 13
                         ut.assertNotEqual({c: 2}, b.b);  // 14
-                        
+
                         let e = window.joClone.call({}, a);
                         ut.assertEqual(a, e, joCompare); //  15  // .bind(window);
-                        
+
                         ut.assertNotEqual(a.d, b.d); // 16
                         ut.assertEqual(a.d, b.d, joCompare);  // 17
                         ut.assertTrue(b.d instanceof Array); // 18
                         ut.assertTrue(b.d[0] === null);  // 19
                         ut.assertTrue(b.d[1] === "astring"); // 20
                         ut.assertTrue(b.d[2] === 1); // 21
-                        
-                        
+
+
                         ut.endMark(5);
                         //Test End - (5)
                     }
-                    
+
                     {
                         //Test start - (6)
                         ut.startMark(6);
@@ -227,7 +227,7 @@
                         console.log(typeof window.alert);
                         console.log(window.alert.prototype);
                         let b = joClone(a);
-                        let c = {a: 1, b: {c: 2}, d: function(){}};
+                        let c = {a: 1, b: {c: 2}, d: function () {}};
                         let d = {a: 1, b: {c: 2}, d: window.alert};
                         ut.assertNotEqual(a, c, joCompare);  // 1
                         ut.assertNotEqual(a, c);  // 2
@@ -243,10 +243,10 @@
                         ut.assertEqual(a.a, b.a);  // 12
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 13
                         ut.assertNotEqual({c: 2}, b.b);  // 14
-                        
+
                         ut.assertTrue(b.d === window.alert);  // 15
-                        
-                        
+
+
                         ut.endMark(6);
                         //Test End - (6)
                     }
@@ -272,7 +272,7 @@
                         ut.assertEqual(a.a, b.a);  // 12
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 13
                         ut.assertNotEqual({c: 2}, b.b);  // 14
-                        
+
                         ut.assertTrue(b.d instanceof Date);  // 15
                         ut.assertTrue(a.d instanceof Date);  // 16
                         ut.writeLog("b.d.toString(): " + Object.prototype.toString.call(b.d));
@@ -284,11 +284,11 @@
                         ut.assertNotEqual(b.d, c.d, joCompare);  // 18
                         ut.assertNotEqual(a.d, b.d);  // 19
                         ut.assertNotEqual(c.d, b.d);  // 20
-                        
+
                         ut.endMark(7);
                         //Test End - (7)
                     }
-                    
+
                     {
                         //Test start - (8)
                         ut.startMark(8);
@@ -311,7 +311,7 @@
                         ut.assertEqual(a.a, b.a);  // 12
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 13
                         ut.assertNotEqual({c: 2}, b.b);  // 14
-                        
+
                         ut.assertTrue(b.d instanceof RegExp);  // 15
                         ut.assertTrue(a.d instanceof RegExp);  // 16
 //                        ut.writeLog("b.d.toString(): " + Object.prototype.toString.call(b.d));
@@ -323,12 +323,12 @@
                         ut.assertNotEqual(b.d, c.d, joCompare);  // 18
                         ut.assertNotEqual(a.d, b.d);  // 19
                         ut.assertNotEqual(c.d, b.d);  // 20
-                        
+
                         let f = {a: 1, b: {c: 2}, d: new RegExp(/w3schools/)};
                         let g = joClone(f);
                         ut.assertEqual(f, g, joCompare);  // 21
                         ut.assertNotEqual(f, g);  // 22
-                        
+
                         ut.assertTrue(f.d instanceof RegExp);  // 23
                         ut.assertTrue(g.d instanceof RegExp);  // 24
                         ut.writeLog("f.d.toString(): " + f.d.toString()); // 
@@ -337,11 +337,11 @@
                         ut.assertNotEqual(g.d, c.d, joCompare);  // 26
                         ut.assertNotEqual(f.d, g.d);  // 27
                         ut.assertNotEqual(c.d, g.d);  // 28
-                        
+
                         ut.endMark(8);
                         //Test End - (8)
                     }
-                    
+
                     {
                         //Test start - (9)
                         ut.startMark(9);
@@ -364,7 +364,7 @@
                         ut.assertEqual(a.a, b.a);  // 12
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 13
                         ut.assertNotEqual({c: 2}, b.b);  // 14
-                        
+
                         ut.assertTrue(b.d instanceof String);  // 15
                         ut.assertTrue(a.d instanceof String);  // 16
 //                        ut.writeLog("b.d.toString(): " + Object.prototype.toString.call(b.d));
@@ -379,7 +379,7 @@
                         ut.endMark(9);
                         //Test End - (9)
                     }
-                    
+
                     {
                         //Test start - (10)
                         ut.startMark(10);
@@ -402,7 +402,7 @@
                         ut.assertEqual(a.a, b.a);  // 12
                         ut.assertEqual({c: 2}, b.b, joCompare);  // 13
                         ut.assertNotEqual({c: 2}, b.b);  // 14
-                        
+
                         ut.assertTrue(b.d instanceof Number);  // 15
                         ut.assertTrue(a.d instanceof Number);  // 16
 //                        ut.writeLog("b.d.toString(): " + Object.prototype.toString.call(b.d));
@@ -418,25 +418,84 @@
                         ut.assertNotEqual(c.d, b.d);  // 20
                         ut.assertTrue(typeof b.d === 'object');  // 21
                         ut.assertTrue(typeof a.d === 'object');  // 21
-                        
+
                         ut.endMark(10);
                         //Test End - (10)
                     }
-                    
+
                     {
                         //Test start - (11)
                         ut.startMark(11);
                         ut.setIndex();
+                        let Owc = (function () {
+                            var num = 0;
+                            return function (name) {
+                                this.name = name;
+                                this.getNum = function () {
+                                    return num;
+                                };
+                                this.setNum = function (x) {
+                                    num = x;
+                                };
+                            };
+                        })();
+                        let owc = new Owc("Closure");
+                        ut.writeLog(owc.getNum());
+                        owc.setNum(9);
+                        ut.writeLog(owc.getNum());
+
+                        let b = joClone(owc);
+                        let c = $.extend(true, {}, owc);
+                        ut.assertEqual(owc, b, joCompare);
+                        // Failed?
+                        ut.assertNotEqual(owc, c, joCompare);
+                        ut.writeLog(c.getNum());
+                        c.setNum(99);
+                        ut.writeLog(c.getNum());
+                        ut.writeLog(owc.getNum());
                         
+                        let expected = {error: "'num' is undefined"};
+                        ut.test1(b, "getNum", null, expected);
+                        //ut.test1(b, "setNum", null, expected);
+                        b.setNum(88);
+                        ut.writeLog("" + this.num);
+                        ut.writeLog("" + b.getNum());
+                        expected = {error: "No error"};
+                        ut.test1(b, "getNum", null, expected);
+                        ut.test1(b, "setNum", null, expected);
+                        
+                        //ut.writeLog(b.getNum());
+                        owc.getNum.x = 100;
+                        ut.writeLog("c.getNum === owc.getNum ? -" +
+                                c.getNum === owc.getNum);
+                        ut.writeLog("b.getNum === owc.getNum ? -" +
+                                b.getNum === owc.getNum);
+                        ut.writeLog("c.getNum.x: " + c.getNum.x);
+                        ut.writeLog("b.getNum.x: " + b.getNum.x);
+
+                        let o = (function () {
+                            var magic = 42;
+                            var magicContainer = function () {
+                                this.get = function () {
+                                    return magic;
+                                };
+                                this.set = function (i) {
+                                    magic = i;
+                                };
+                            };
+                            return new magicContainer;
+                        }());
+
+
                         ut.endMark(11);
                         //Test End - (11)
                     }
-                    
+
                     {
                         //Test start - (12)
                         ut.startMark(12);
                         ut.setIndex();
-                        
+
                         ut.endMark(12);
                         //Test End - (12)
                     }

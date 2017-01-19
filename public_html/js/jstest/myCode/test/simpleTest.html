@@ -21,7 +21,7 @@
         <script></script>
         <script>
             try {
-                var ut = new TestCase();
+                var ut = TestCase.getInstance();
                 //var dict = Object.setPrototypeOf({}, null);  // safari will fail on this 
                 //var dict = Object.setPrototypeOf(Object.create(null), Object.prototype);
                 //var dict = Object.setPrototypeOf({}, {});
@@ -52,7 +52,9 @@
                     };
                     var f = joClone(e);
                     ut.assertEqual(e, f, joCompare);
-
+                    
+                    
+                    
                     ut.endMark(1);
                 }
                 grab("demo").innerHTML = ut.conclude();

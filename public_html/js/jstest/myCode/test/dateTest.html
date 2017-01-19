@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Date Test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../../jquery-3.1.1.js"></script>
+        <script src="../../../lodash.js"></script>
+        <script src="../obj.js"></script>
+        <script src="../util.js"></script>
+        <script src="../unitTest.js"></script>
+        <script src="../testData.js"></script>
+
+    </head>
+    <body>
+        <h1>This is a JS Date Test</h1>
+        <button name="b1" id="show">Refresh!</button>
+        <p></p>
+        <div id="demo"></div>
+        <script></script>
+        <script>
+            
+            var alltests = function () {
+                try {
+                    var ut = TestCase.getInstance();
+                    {
+                        // Test(1) - Start
+                        ut.startMark("1", "");
+                        ut.setIndex();
+                        var x = new Date();
+                        x.prop = "Hello";
+                        ut.writeLog(x instanceof Date);
+                        ut.writeLog(Object.prototype.isPrototypeOf(x));
+                        var p = Object.getOwnPropertyNames(x);
+                        var xp = Object.getPrototypeOf(x);
+                        var pp = Object.getOwnPropertyNames(xp);
+                        ut.writeLog(p.length + " - " + p.join());
+                        ut.writeLog(pp.length + " - " + pp.join());
+                        var y = new Date(+x);
+                        ut.writeLog(x.toString() === y.toString());
+                        
+                        var NewDate = null;
+                        
+                        var a = (function(){
+                            var num = 0;
+                            var arr = [];
+                            arr.push(function(){
+                                    return num;
+                                });
+                            arr.push(function(x){
+                                    num = x;
+                                });
+                            return arr;
+                        })();
+                        
+                        var owc = {
+                            name: "closure",
+                            getNum: a[0],
+                            setNum: a[1]
+                        };
+                        
+                        ut.writeLog(owc.getNum());
+                        owc.setNum(99);
+                        ut.writeLog(owc.getNum());
+                        
+                        ut.writeLog(" ");
+                        ut.endMark("1", "");
+                        // Test(1) - end
+                    }
+                    
+                    grab("demo").innerHTML = ut.conclude();
+                } catch (err) {
+                    alert(err.name + ": " + err.message);
+                }
+            }.bind(this);
+            alltests();
+            $(document).ready(function () {
+                try {
+                    txt = "Hello, World!";
+                    $("#show").on("click", alltests);
+                } catch (err) {
+                    alert(err.name + ": " + err.message);
+                }
+            });
+        </script>
+
+    </body>
+</html>

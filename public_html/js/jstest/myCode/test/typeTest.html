@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Comparison Test</title>
+        <title>Type Test</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="../../../jquery-3.1.1.js"></script>
@@ -13,7 +13,7 @@
 
     </head>
     <body>
-        <h1>This is a JS Test</h1>
+        <h1>This is a JS Type Test</h1>
         <button name="b1" id="show">Refresh!</button>
         <p></p>
         <div id="demo"></div>
@@ -27,6 +27,20 @@
                         // Test(1) - Start
                         ut.startMark("1", "");
                         ut.setIndex();
+                        let reg = Object.create(RegExp.prototype);
+                        let a = /[a-z]/gi;
+                        ut.writeLog((reg instanceof RegExp));
+                        console.log(reg instanceof RegExp);
+                        ut.writeLog(a.source);
+                        ut.writeLog("NaN == null : " + (NaN == null));
+                        ut.writeLog("undefined == null : " + (undefined == null));
+                        ut.writeLog("0 == null : " + (0 == null));
+                        ut.writeLog("false == null : " + (false == null));
+                        ut.writeLog("'' == null : " + ('' == null));
+                        ut.writeLog("jQuery.type(NaN) : " + jQuery.type(NaN));
+                        ut.writeLog("type2(NaN) : " + type2(NaN));
+                        let b = new Int8Array();
+                        ut.writeLog(Object.prototype.toString.call(b));
                         
                         ut.writeLog(" ");
                         ut.endMark("1", "");

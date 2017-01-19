@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Comparison Test</title>
+        <title>a Test</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="../../../jquery-3.1.1.js"></script>
@@ -17,9 +17,12 @@
         <button name="b1" id="show">Refresh!</button>
         <p></p>
         <div id="demo"></div>
+
         <script></script>
         <script>
-            
+
+
+
             var alltests = function () {
                 try {
                     var ut = TestCase.getInstance();
@@ -27,12 +30,33 @@
                         // Test(1) - Start
                         ut.startMark("1", "");
                         ut.setIndex();
+                        let cars = [
+                            {id: 23, make: 'honda', color: 'green'},
+                            {id: 36, make: 'acura', color: 'silver'},
+                            {id: 18, make: 'ford', color: 'blue'},
+                            {id: 62, make: 'ford', color: 'green'}
+                        ];
+                        let cars_s = cars.map(function (x) {
+                            return x.id;
+                        });
+                        let i = cars_s.indexOf(18);
+                        console.log(i);
+                        console.log(cars[i]);
                         
+                        let index = {};
+                        for (let i = 0; i < cars_s.length; i++) {
+                            index[cars_s[i]] = i;
+                        }                        
+                        console.log(index[18]);
+                        ut.writeLog(i);
+                        ut.writeLog(index[18]);
+
+
                         ut.writeLog(" ");
                         ut.endMark("1", "");
                         // Test(1) - end
                     }
-                    
+
                     grab("demo").innerHTML = ut.conclude();
                 } catch (err) {
                     alert(err.name + ": " + err.message);

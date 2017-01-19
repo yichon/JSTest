@@ -20,7 +20,7 @@
         <script>
             var alltests = function () {
                 try {
-                    var ut = new TestCase();
+                    var ut = TestCase.getInstance();
                     var i, j, temp, d;
                     {
                         // Test(1) - Start
@@ -425,6 +425,139 @@
                         ut.writeLog(" ");
                         ut.endMark("2", "");
                         // Test(2) - end
+                    }
+
+                    {
+                        // Test(3) - Start
+                        ut.startMark("3", "");
+                        ut.setIndex();
+                        var upbio = [], downbio = [], tfupbio = [],
+                                upbiof = [], upbioclass = [], upbioclassp = [];
+                        var isUp = function (str) {
+                            if (typeof str === 'string') {
+                                return /^[A-Z][a-zA-Z0-9_$]*$/.test(str);
+                            }
+                            return false;
+                        };
+                        ut.writeLog('isUp("String") : ' + isUp("String"));
+                        ut.writeLog('isUp("string") : ' + isUp("string"));
+                        ut.writeLog('isUp("STring") : ' + isUp("STring"));
+                        ut.writeLog('isUp("STrinGs") : ' + isUp("STrinGs"));
+                        ut.writeLog('isUp("sTrinG") : ' + isUp("sTrinG"));
+                        ut.writeLog(" ");
+
+                        for (i = 0; i < bio.length; i++) {
+                            if (isUp(bio[i])) {
+                                upbio.push(bio[i]);
+                                upbioclass.push(Object.prototype.toString.call(window[bio[i]]));
+                                upbioclassp.push(Object.prototype.toString.call(window[bio[i]].prototype));
+                                tfupbio.push(typeof window[bio[i]]);
+                                if (typeof window[bio[i]] === 'function')
+                                    upbiof.push(bio[i]);
+                            } else
+                                downbio.push(bio[i]);
+                        }
+
+
+                        ut.writeLog("@upBiO: ");
+                        ut.writeLog("@upbio.length / bio.length: " + upbio.length + "/" + bio.length);
+                        temp = [];
+                        for (i = 0; i < upbio.length; i++) {
+                            temp.push(upbio[i]);
+                            if ((temp.length) % 7 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog("@downBiO: ");
+                        ut.writeLog("@downbio.length / bio.length: " + downbio.length + "/" + bio.length);
+                        temp = [];
+                        for (i = 0; i < downbio.length; i++) {
+                            temp.push(downbio[i]);
+                            if ((temp.length) % 7 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog("@BiO Class: ");
+                        ut.writeLog("@upbioclass.length / upbio.length: " + upbioclass.length + "/" + upbio.length);
+                        temp = [];
+                        for (i = 0; i < upbioclass.length; i++) {
+                            temp.push(upbioclass[i]);
+                            if ((temp.length) % 5 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog("@BiO Prototype Class: ");
+                        ut.writeLog("@upbioclassp.length / upbio.length: " + upbioclassp.length + "/" + upbio.length);
+                        temp = [];
+                        for (i = 0; i < upbioclassp.length; i++) {
+                            temp.push(upbioclassp[i]);
+                            if ((temp.length) % 5 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog("@Typeof BiO: ");
+                        ut.writeLog("@tfupbio.length / upbio.length: " + tfupbio.length + "/" + upbio.length);
+                        temp = [];
+                        for (i = 0; i < tfupbio.length; i++) {
+                            temp.push(tfupbio[i]);
+                            if ((temp.length) % 5 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+                        
+                        ut.writeLog("@Function BiO: ");
+                        ut.writeLog("@upbiof.length / upbio.length: " + upbiof.length + "/" + upbio.length);
+                        temp = [];
+                        for (i = 0; i < upbiof.length; i++) {
+                            temp.push(upbiof[i]);
+                            if ((temp.length) % 5 === 0) {
+                                ut.writeLog(temp.join(" , "));
+                                temp = [];
+                            }
+                        }
+                        if (temp.length > 0) {
+                            ut.writeLog(temp.join(" , "));
+                            temp = [];
+                        }
+                        ut.writeLog(" ");
+
+                        ut.writeLog(" ");
+                        ut.endMark("3", "");
+                        // Test(3) - end
                     }
 
                     grab("demo").innerHTML = ut.conclude();

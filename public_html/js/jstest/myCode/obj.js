@@ -1,23 +1,90 @@
 //jo stands for Javascript Object
 var jo = {};
-function type(o) {
-    var to = typeof o;
+jo.type1 = type1;
+jo.type2 = type2;
+jo.getProto = joGetProto;
+jo.setProto = joSetProto;
+jo.isEmpty = isEmptyObj;
+jo.output = outputObj;
+jo.create = joCreate;
+jo.compare = joCompare;
+jo.rawClone = joRawClone;
+jo.clone = joClone;
+
+//
+function isNullObj(o){
+    try { //Object.create(null) & its descendants will throw an error 
+        if (typeof o === "object")
+            isNaN(o);
+        return false;
+    } catch (err) {
+        return true;
+    }
+}
+//
+function type1(o) {
+    var to;
     if (o === null)
         return "null";
     if (o instanceof Array)
         return "array";
+    to = typeof o;
     if (to === "number" && isNaN(o))
         return "NaN";
-    try { //Object.create(null) & its descendants will throw an error 
-        if (to === "object")
-            isNaN(o);
-    } catch (err) {
+    if(isNullObj(o))
         return "nullobj";
-    }
     return to;
 }
 //
-function getProto(obj) {
+function type2(o) {
+    var tfo, class2type;
+    if (o == null) {
+        return o + "";
+    }
+    if(isNullObj(o))
+        return "nullobj";
+    tfo = typeof o;
+    if (tfo === "number" && isNaN(o))
+        return "NaN";
+    class2type =
+            {
+                "[object Boolean]": "boolean",
+                "[object Number]": "number",
+                "[object String]": "string",
+                "[object Function]": "function",
+                "[object Array]": "array",
+                "[object Date]": "date",
+                "[object RegExp]": "regexp",
+                "[object Object]": "object",
+                "[object Error]": "error",
+                "[object Symbol]": "symbol"
+            };
+
+    // Support: Android <=2.3 only (functionish RegExp)
+    return tfo === "object" || tfo === "function" ?
+            class2type[Object.prototype.toString.call(o)] || "object" : tfo;
+
+}
+//
+function regexpCreate() {
+
+}
+//
+function joCreate(type, para) {
+    switch (type) {
+        case 'function':
+        case 'regexp':
+            return eval('(' + para + ')');
+        case 'string':
+            return new String(para);
+        case 'date':
+            return new Date(para);
+
+    }
+}
+
+//
+function joGetProto(obj) {
     if ((typeof obj !== 'object' && typeof obj !== 'function') || obj === null)
         throw "getProto: object or function expected";
 
@@ -33,8 +100,9 @@ function getProto(obj) {
 
     throw "getProto: Your browser doesn't support 'Object.getPrototypeOf'!";
 }
+var getProto = joGetProto;
 //
-function setProto(obj, proto) {
+function joSetProto(obj, proto) {
     if ((typeof obj !== 'object' && typeof obj !== 'function') || obj === null)
         throw "getProto: object or function expected - obj";
 
@@ -53,18 +121,25 @@ function setProto(obj, proto) {
     else
         throw "getProto: Your browser doesn't support 'Object.setPrototypeOf'!";
 }
-
+var setProto = joSetProto;
 
 // Finished
 function isEmptyObj(e) {
-    var t;
-    for (t in e)
+    var i;
+    //
+    for (i in e)
         return false;
+    //
+    if (Object.getOwnPropertyNames) {
+        i = Object.getOwnPropertyNames(e);
+        if (i.length > 0)
+            return false;
+    }
     return true;
 }
-;
+
 // Finished
-function outputObj(o, decodeUrl) {
+function joOutput(o, decodeUrl) {
     if (typeof o !== "object")
         return "[Not an object]";
     if (isEmptyObj(o))
@@ -98,7 +173,7 @@ function outputObj(o, decodeUrl) {
     };
     return sub(o);
 }
-;
+var outputObj = joOutput;
 
 // Building
 // Object.is() ?
@@ -113,9 +188,9 @@ function joCompare(o1, o2) {
         if (o1 === o2)
             return true;
 
-        o1_t = type(o1);
+        o1_t = jo.type1(o1);
         //different types means that they are not equal.
-        if (o1_t !== type(o2))
+        if (o1_t !== jo.type1(o2))
             return false;
 
         // NaN === NaN returns false
@@ -201,22 +276,9 @@ function joCompare(o1, o2) {
         }
 
         // prototypes
-        if (typeof Object.getPrototypeOf === 'function') {
-            proto1 = Object.getPrototypeOf(o1);
-            proto2 = Object.getPrototypeOf(o2);
-        } else if ((typeof o1.__proto__ === 'object' &&
-                typeof o2.__proto__ === 'object')) {
-            proto1 = o1.__proto__;
-            proto2 = o2.__proto__;
-        } else if (typeof o1.constructor === 'function' &&
-                typeof o2.constructor === 'function' &&
-                Object.prototype.isPrototypeOf.call(o1.constructor.prototype, o1) &&
-                Object.prototype.isPrototypeOf.call(o2.constructor.prototype, o2)) {
-            proto1 = o1.constructor.prototype;
-            proto2 = o2.constructor.prototype;
-        } else {
-            throw "Your browser doesn't support the method 'Object.getPrototypeOf'!";
-        }
+        proto1 = jo.getProto(o1);
+        proto2 = jo.getProto(o2);
+
         if_return = trace_push(proto1, proto2);
         if (if_return !== undefined)
             return if_return;
@@ -229,12 +291,8 @@ function joCompare(o1, o2) {
     };
     return sub(o1, o2);
 }
-;
+var compareContent = joCompare;
 
-// Building
-function compareContent(o1, o2) {
-    return joCompare(o1, o2);
-}
 // Finished
 //from stackoverflow
 function deepCompare() {
@@ -349,6 +407,20 @@ function deepCompare() {
 
     return true;
 }
+// Building
+function joRawClone(o) {
+    var copy;
+    if (typeof o === 'function' || o instanceof RegExp) {
+        console.log("eval(*function/RegExp*)" + o.constructor.prototype.toString.call(o));
+        copy = eval('(' + o.constructor.prototype.toString.call(o) + ')');
+    } else if (Object.prototype.toString.call(o) === '[object Date]' ||
+            o instanceof Number) {
+        console.log("new Date/Number(+o)");
+        copy = new o.constructor(+o);
+    }
+
+    return copy;
+}
 
 // Building
 var joClone = function (obj) {
@@ -423,11 +495,11 @@ var joClone = function (obj) {
         if (typeof obj === 'function' || obj instanceof RegExp) {
             console.log("eval(*function/RegExp*)" + obj.constructor.prototype.toString.call(obj));
             copy = eval('(' + obj.constructor.prototype.toString.call(obj) + ')');
-        } else if (Object.prototype.toString.call(obj) === '[object Date]' || 
+        } else if (Object.prototype.toString.call(obj) === '[object Date]' ||
                 obj instanceof Number) {
             console.log("new Date/Number(+obj)");
             copy = new obj.constructor(+obj);
-        } 
+        }
 //        else if (obj instanceof RegExp) {
 //            d = obj.toString();
 //            i = d.lastIndexOf("/");
@@ -469,15 +541,20 @@ var joClone = function (obj) {
         }
         // prototypes
         console.log("setProto(copy, subClone(getProto(obj))) a: " + Object.prototype.toString.call(copy));
-        var y = getProto(obj);
+        var y = jo.getProto(obj);
         console.log("setProto(copy, subClone(getProto(obj))) b ");
         var x = subClone(y);
         console.log("setProto(copy, subClone(getProto(obj))) c ");
-        setProto(copy, x);
-        //setProto(copy, subClone(getProto(obj)));
+        jo.setProto(copy, x);
+        //jo.setProto(copy, subClone(jo.getProto(obj)));
 
         return copy;
     };
 
     return subClone(obj);
 }.bind(window);
+
+
+
+
+

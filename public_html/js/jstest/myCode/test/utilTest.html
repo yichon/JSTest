@@ -83,7 +83,7 @@
                             [[c], {value: "object"}], // 18
                             [[d], {value: "object"}]  // 19
                         ];
-                        let ut = new TestCase(0, true);
+                        let ut = TestCase.getInstance();
                         ut.tester(this, "type", list);
 //                        expected = {value: "null"};
 //                        ut.tester(this, "type", [null], expected); //   1

@@ -19,7 +19,7 @@
         <div id="demo"></div>
         <script></script>
         <script>
-            
+
             var alltests = function () {
                 try {
                     var ut = TestCase.getInstance();
@@ -27,12 +27,33 @@
                         // Test(1) - Start
                         ut.startMark("1", "");
                         ut.setIndex();
+                        var x = [1, 2, 3];
+                        x.counter = 0;
+                        x.push = function (o) {
+                            this.counter++;
+                            Array.prototype.push.call(this, o);
+                        };
+                        x["aa"] = "some things";
+                        x.push(4);
+                        ut.writeLog("len: " + x.length);
+                        ut.writeLog(x.toString());
+                        ut.writeLog("Added number: " + x.counter);
                         
+                        x.push(5);
+                        ut.writeLog("len: " + x.length);
+                        ut.writeLog(x.toString());
+                        ut.writeLog("Added number: " + x.counter);
+                        ut.writeLog("aa: " + x.aa);
+                        
+                        for(let i = 0; i < x.length; i++){
+                            ut.writeLog("x[" + i + "]: " + x[i]);
+                        }
+
                         ut.writeLog(" ");
                         ut.endMark("1", "");
                         // Test(1) - end
                     }
-                    
+
                     grab("demo").innerHTML = ut.conclude();
                 } catch (err) {
                     alert(err.name + ": " + err.message);

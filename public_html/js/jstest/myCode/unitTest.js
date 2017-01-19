@@ -1,5 +1,5 @@
 // return specific data types
-function type(o) {
+function type1(o) {
     var to = typeof o;
     if (o === null)
         return "null";
@@ -83,7 +83,7 @@ function Log(index) {
                 r = "<span style = 'color:red'>" + this.result + "</span>";
             txt = this.index + ". [" + r + "]: (...) ==> (" +
                     this.output + ") - (" + this.expect + ") expected<br>";
-        } else if (typeof words === "string")
+        } else //if (typeof words === "string")
             txt = "<span style = 'color:blue'>" + words + "</span><br>";
 
         this.text += txt;
@@ -97,6 +97,9 @@ function TestCase(num, html) {
     else
         this.html = html;
 }
+TestCase.getInstance = function () {
+    return new TestCase(0, true);
+};
 TestCase.prototype.setIndex = function (index) {
     this.log.index = (typeof index === 'number' && !isNaN(index)) ? index : 0;
 };
@@ -159,10 +162,10 @@ TestCase.prototype.test$ = function (obj, func, input, expected, cpf) {
         if ("value" in expected)
             expect = expected.value;
         else if ("type" in expected) {
-            output = "`Type: " + type(output) + "`";
+            output = "`Type: " + type1(output) + "`";
             expect = "`Type: " + expected.type + "`";
         } else if ("error" in expected) {
-            e = new Error("No error occured");
+            e = new Error("No error");
             e.name = "Failed";
             throw e;
         } else
